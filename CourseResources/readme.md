@@ -1,0 +1,8 @@
+- Source_Code_Final_NetMicroservices.zip. 
+- Roadmap_NetMicroservices.pdf. Your roadmap to navigate across the multiple course modules.
+- Handouts_NetMicroservices.pdf. The illustrated handouts for all the slide decks presented across the course.
+- Lesson_Scripts_NetMicroservices. The scripts that the instructor used for every line of code and command used in every coding lesson.
+- Postman_Files.zip. Postman collections and environments used across the course, which you can import in Postman to quickly invoke any of the microservice REST APIs.
+- Nuget_Packages.zip. NuGet packages used in the course. You can place the packages included in this zip in a directory in your box to reference them from your .NET projects.
+- Net8Upgrade.pdf. A quick guide on how to upgrade your projects to .NET 8 in case you originally created it with an older .NET version.
+- Roadmap_NetMicroservices.pdf
