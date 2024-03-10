@@ -11,6 +11,11 @@
 ### Why Generally NoSQL database is preferred for microservice architecture.
 NoSQL databases are often preferred for microservices architectures due to their alignment with the characteristics and requirements typically associated with microservices. Here's why:
 
+- Won't need relationships across the data
+- Don't need ACID guarantees
+- Won't need to write a complex queries
+- Need low latency, high availability and high scalability.
+
 1. **Simplified Data Models**: NoSQL databases offer flexible data models such as key-value pairs, document-oriented storage, and column-family storage. These models are well-suited for microservices because they allow developers to store and retrieve data in formats that directly correspond to the needs of each service. Since microservices typically handle specific functionalities, they often don't require complex relationships across the data, making NoSQL databases a good fit.
 
 2. **Looser Consistency Models**: Microservices architectures often prioritize scalability and availability over strong consistency guarantees provided by traditional relational databases (ACID guarantees). NoSQL databases often offer eventual consistency models, which allow for high availability and scalability without the performance overhead of strict ACID compliance. This fits well with the distributed nature of microservices, where services may operate independently and require only eventual consistency.
