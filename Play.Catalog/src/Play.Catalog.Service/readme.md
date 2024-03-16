@@ -18,3 +18,22 @@ This Docker command is used to run a MongoDB container. L
 6. `--name mongo`: This flag assigns the name "mongo" to the container. This allows you to easily reference the container by name instead of using its container ID.
 
 Putting it all together, this Docker command runs a MongoDB container in detached mode, exposes port 27017 for communication with the MongoDB service, creates a volume for persistent data storage, and names the container "mongo".
+
+# Sample JSON data 
+```json
+{
+    "name": "1: Potion",
+    "description": "Restores a small amount of HP",
+    "price": 10
+  },
+  {
+    "name": "2: Antidote",
+    "description": "Cures poison",
+    "price": 20
+  },
+  {
+    "name": "3: Bronze sword",
+    "description": "Deals a small amount of damage",
+    "price": 30
+  }
+ ``` 

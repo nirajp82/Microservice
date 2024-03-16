@@ -11,7 +11,12 @@ namespace Play.Catalog.Service.Controllers;
 [Route("items")]
 public class ItemsController : ControllerBase
 {
-    public readonly ItemsRepository _itemsRepository = new();
+    public readonly IItemsRepository _itemsRepository;
+
+    public ItemsController(IItemsRepository itemsRepository)
+    {
+        _itemsRepository = itemsRepository;
+    }
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<ItemDto>>(StatusCodes.Status200OK)]
