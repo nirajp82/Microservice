@@ -1,7 +1,16 @@
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//In MongoDB, Guids can be represented as either Binary Data (BSON Binary type) or as a string. 
+//By default, MongoDB's C# driver serializes Guids as Binary Data.
+//So change the default settings to store them as strings for readability or compatibility reasons.
+BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.String));
+//Specifies that the DateTimeOffset objects should be serialized as strings (Bson.BsonType.String).
+BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
 
+// Add services to the container.
 builder.Services.AddControllers(
     options =>
     {
