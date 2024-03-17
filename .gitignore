@@ -17,3 +17,6 @@ Version.h
 Version.cpp
 */bin/*
 */obj/*
+*.dll
+*.pdb
+*.exe
