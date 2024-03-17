@@ -1,0 +1,26 @@
+#Specifies the version of Docker Compose file format.
+version: '3.8'
+
+#To use this docker-compose.yml file, save it in your project directory and then run docker-compose up -d to start the services defined in the file in detached mode. This will create and start a MongoDB container named "mongo" with the specified configuration.
+
+#Defines the services to be run.
+services:
+  # MongoDB Service: docker run -d -p 27017:27017 -v mongodbdata:/data/db --rm --name mongo mongo
+  mongo:
+    #Specifies the Docker image to use for the MongoDB container.
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    #Mounts a volume named mongodbdata to the container's /data/db directory. This volume is used to persist MongoDB data.
+    volumes:
+      # Named docker persistence volume: 
+      # Volumes allow you to store data outside the container, ensuring it survives container restarts or upgrades. This is crucial for MongoDB as it needs its database files to persist.
+      # volumeName:containerPath:ro
+      - mongodbdata:/data/db
+
+# Volume for MongoDB data
+volumes:
+  mongodbdata:
+
+
