@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Entities;
@@ -61,12 +59,12 @@ public class ItemsController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> PutAsync(Guid id, UpdateItemDto updateItemDto)
+    public async Task<IResult> PutAsync(Guid id, UpdateItemDto updateItemDto)
     {
         var existingItem = await _itemsRepository.GetAsync(id);
         if (existingItem == null)
         {
-            return NotFound();
+            return Results.NotFound();
         }
 
         existingItem.Name = updateItemDto.Name;
@@ -74,21 +72,21 @@ public class ItemsController : ControllerBase
         existingItem.Price = updateItemDto.Price;
 
         await _itemsRepository.UpdateAsync(existingItem);
-        return NoContent();
+        return Results.NoContent();
     }
 
     // DELETE /items/{id}
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IResult> Delete(Guid id)
     {
         var existingItem = await _itemsRepository.GetAsync(id);
         if (existingItem == null)
         {
-            return NotFound();
+            return Results.NotFound();
         }
 
         await _itemsRepository.RemoveAsync(id);
-        return NoContent();
+        return Results.NoContent();
     }
 }

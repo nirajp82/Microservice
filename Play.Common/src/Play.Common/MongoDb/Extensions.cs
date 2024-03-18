@@ -30,6 +30,8 @@ public static class Extensions
 
             //Retrive Service Settings Options that is configured as service in Program.cs
             IOptions<ServiceSettings> serviceSettingsOptions = serviceProvider.GetService<IOptions<ServiceSettings>>()!;
+            //var serviceSettings = configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+            //IMongoDatabase mongoDatabase = mongoDbClient.GetDatabase(serviceSettings!.ServiceName);
 
             // Access the service name from ServiceSettings to determine the database to connect to
             IMongoDatabase mongoDatabase = mongoDbClient.GetDatabase(serviceSettingsOptions.Value!.ServiceName);
