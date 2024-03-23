@@ -1,3 +1,5 @@
+#To run use command `docker-compose up -d`
+
 #Specifies the version of Docker Compose file format.
 version: '3.8'
 
@@ -20,7 +22,7 @@ services:
       - mongodbdata:/data/db
 
 # Volume for MongoDB data
+# This declares named volumes. These named volumes are managed by Docker and are not tied to a specific container.
+# Their declaration at the end of the Docker Compose file does not create them; instead, it makes Docker aware of their existence and their names. 
 volumes:
   mongodbdata:
-
-

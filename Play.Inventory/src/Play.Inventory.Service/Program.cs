@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using Play.Inventory.Service.Entities;
 using Play.Common.MongoDb;
 using Play.Common.Settings;
+using Play.Inventory.Service.Clients;
+using Play.Inventory.Service.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,13 @@ builder.Services.Configure<ServiceSettings>(serviceSettingsSection);
 builder.Services
     .AddMongo()
     .AddMongoRepo<InventoryItem>("items");
+
+//Create Typed clients, It will add the IHttpClientFactory and related services to the IServiceCollection.
+//https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory
+builder.Services.AddHttpClient<CatalogClient>(cc =>
+{
+    cc.BaseAddress = new Uri("https://localhost:5001");
+});
 
 // Add services to the container.
 builder.Services.AddControllers(
