@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Entities;
@@ -10,6 +11,7 @@ namespace Play.Catalog.Service.Controllers;
 public class ItemsController : ControllerBase
 {
     public readonly IRepository<Item> _itemsRepository;
+    static int _requestCnt = 0;
 
     public ItemsController(IRepository<Item> itemsRepository)
     {
@@ -20,9 +22,27 @@ public class ItemsController : ControllerBase
     [ProducesResponseType<IEnumerable<ItemDto>>(StatusCodes.Status200OK)]
     public async Task<IResult> GetAsync()
     {
+        await ClientPollyTest();
+
         var result = (await _itemsRepository.GetAllAsync())
                         .Select(Item => Item.AsDto());
         return Results.Ok(result);
+    }
+
+    async Task ClientPollyTest()
+    {
+        _requestCnt++;
+        Console.WriteLine($"Request starting... Counter:{_requestCnt}");
+        if (_requestCnt <= 3)
+        {
+            Console.WriteLine($"Delaing Request... Counter:{_requestCnt}");
+            await Task.Delay(1500);
+        }
+        if (_requestCnt < 15)
+        {
+            Console.WriteLine($"Throw exception... Counter:{_requestCnt}");
+            throw new BadHttpRequestException($"Throw Bad request exception... Counter:{_requestCnt}", (int)HttpStatusCode.BadRequest);
+        }
     }
 
     // GET /items/{id}

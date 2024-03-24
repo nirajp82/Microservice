@@ -37,7 +37,7 @@ public class ItemsController : ControllerBase
 
         var inventoryItemDtos = inventoryItems.Select(item =>
         {
-            var catalogItem = catalogItems.FirstOrDefault(ci => ci.Id == item.CatalogItemId);
+            var catalogItem = catalogItems?.FirstOrDefault(ci => ci.Id == item.CatalogItemId);
             return item.AsDto(catalogItem?.Name, catalogItem?.Description);
         });
 
