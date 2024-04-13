@@ -22,8 +22,10 @@ public class ItemsController : ControllerBase
     [ProducesResponseType<IEnumerable<ItemDto>>(StatusCodes.Status200OK)]
     public async Task<IResult> GetAsync()
     {
-        await ClientPollyTest();
-
+        if (false)
+        {
+            await ClientPollyTest();
+        }
         var result = (await _itemsRepository.GetAllAsync())
                         .Select(Item => Item.AsDto());
         return Results.Ok(result);
