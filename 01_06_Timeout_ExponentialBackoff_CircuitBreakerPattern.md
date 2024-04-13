@@ -220,3 +220,114 @@ In this example:
 - Use it when you want to limit the impact of failures by isolating components or resources, improving overall system stability and reliability.
 
 In summary, the Bulkhead pattern provides a mechanism for partitioning resources or components to contain failures and prevent them from propagating throughout the system. By implementing bulkheads, you can improve system resilience, manage resources more effectively, and maintain stability in the face of failures.
+
+
+## Real world example of setting up policy
+```csharp
+//Create Typed clients, It will add the IHttpClientFactory and related services to the IServiceCollection.
+//https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory
+builder.Services.AddHttpClient<CatalogClient>(cc =>
+{
+    cc.BaseAddress = new Uri("https://localhost:5001");
+})
+//Handle transient HTTP errors and timeouts gracefully. 
+//It sets up a retry policy to automatically retry failed requests up to 5 times with 
+//Exponentially increasing wait times between retries and adds a timeout policy 
+//to cancel requests that exceed 1 second without receiving a response.
+.AddPolicyHandler((serviceProvider, request) =>
+    HttpPolicyExtensions.HandleTransientHttpError()
+        .Or<TimeoutRejectedException>()
+        .WaitAndRetryAsync
+        (
+            retryCount: 5,
+            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                                    + TimeSpan.FromMilliseconds(randomJitter.Next(0, 1000)),
+            onRetry: (outcome, timespan, retryAttempt, context) =>
+            {
+                var msg = $"Delaying for {timespan.TotalSeconds} seconds, then making retry {retryAttempt}";
+                serviceProvider.GetService<ILogger<CatalogClient>>()?
+                    .LogWarning("{msg}", msg);
+            }
+        ))
+.AddPolicyHandler((serviceProvider, request) =>
+    HttpPolicyExtensions.HandleTransientHttpError()
+        .Or<TimeoutRejectedException>()
+        .CircuitBreakerAsync
+        (
+            handledEventsAllowedBeforeBreaking: 3,
+            durationOfBreak: TimeSpan.FromSeconds(15),
+            onBreak: (outcome, timespan) =>
+            {
+                var msg = $"Opening the circuit for {timespan.TotalSeconds} seconds...";
+                serviceProvider.GetService<ILogger<CatalogClient>>()?
+                    .LogWarning("{msg}", msg);
+            },
+            onReset: () =>
+            {
+                var msg = $"Closing the circuit...";
+                serviceProvider.GetService<ILogger<CatalogClient>>()?
+                    .LogWarning("{msg}", msg);
+            }
+        ))
+//Timeout the request if not completed with in 1 seconds
+.AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
+```
+The provided code snippet demonstrates how to configure resilience for HTTP requests made by a `CatalogClient` in a .NET application using the Polly library. It leverages dependency injection and the `IHttpClientFactory` to create a resilient client.
+
+**Breakdown:**
+
+1. **Adding `HttpClient` (Typed Client):**
+   - `builder.Services.AddHttpClient<CatalogClient>(cc => ... )`:
+     - This line registers a typed HTTP client for `CatalogClient` in the application's dependency injection container.
+     - `cc` (configuration action): Used to configure the client's behavior.
+   - `cc.BaseAddress = new Uri("https://localhost:5001")`:
+     - Sets the base address for the client to "https://localhost:5001". This is the endpoint the client will communicate with.
+
+2. **Handling Transient Errors and Timeouts (Retry Policy):**
+   - `.AddPolicyHandler((serviceProvider, request) => ... )`:
+     - Adds a policy handler to the client pipeline. This handler intercepts outgoing HTTP requests and applies the configured policy.
+   - `HttpPolicyExtensions.HandleTransientHttpError()`:
+     - Instructs the policy to handle transient HTTP errors, such as network timeouts, connection resets, or server errors that might be resolved on retry.
+   - `.Or<TimeoutRejectedException>()`:
+     - Extends the policy to also handle `TimeoutRejectedException`, which could occur if a request exceeds a predefined timeout limit.
+   - `.WaitAndRetryAsync(...)`:
+     - Configures a retry strategy:
+       - `retryCount: 5`: Retries the request up to 5 times.
+       - `sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(randomJitter.Next(0, 1000))`:
+         - Defines an exponential backoff strategy for delays between retries.
+           - The delay increases with each retry attempt (2 raised to the power of the attempt number).
+           - A random jitter (between 0 and 1000 milliseconds) is added to prevent synchronization issues with multiple clients retrying simultaneously.
+       - `onRetry: (outcome, timespan, retryAttempt, context) => ...`:
+         - A callback function invoked when a retry occurs. It logs a warning message using the `ILogger<CatalogClient>` service (if available) stating the delay and retry attempt number.
+
+3. **Circuit Breaker Pattern:**
+   - `.AddPolicyHandler((serviceProvider, request) => ... )`: (Another instance of the policy handler)
+     - Adds another policy handler to the client pipeline for the circuit breaker pattern.
+   - `HttpPolicyExtensions.HandleTransientHttpError()`:
+     - Instructs the policy to handle transient HTTP errors (same as before).
+   - `.Or<TimeoutRejectedException>()`:
+     - Extends the policy to also handle `TimeoutRejectedException` (same as before).
+   - `.CircuitBreakerAsync(...)`:
+     - Configures a circuit breaker pattern:
+       - `handledEventsAllowedBeforeBreaking: 3`: The number of handled errors (transient errors or timeouts) allowed within a timeframe before the circuit trips (3 in this case).
+       - `durationOfBreak: TimeSpan.FromSeconds(15)`: The duration for which the circuit remains open (tripped) after it breaks, preventing further requests for 15 seconds.
+       - `onBreak: (outcome, timespan) => ...`:
+         - A callback function invoked when the circuit breaks. It logs a warning message using the `ILogger<CatalogClient>` service (if available) stating that the circuit is opening for 15 seconds.
+       - `onReset: () => ...`:
+         - A callback function invoked when the circuit resets (closes) after the break duration elapses. It logs a warning message indicating that the circuit is closing.
+
+4. **Timeout Policy:**
+   - `.AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1))`:
+     - Adds another policy handler to the client pipeline for a simple timeout policy.
+   - `Policy.TimeoutAsync<HttpResponseMessage>(1)`:
+     - Instructs the policy to timeout requests that don't receive a response within 1 second.
+
+**In summary:**
+
+This code configures the `CatalogClient` to be resilient against failures by:
+
+- Retrying transient errors and timeouts with an exponential backoff strategy.
+- Implementing a circuit breaker pattern that prevents cascading failures by halting requests for a short period after a certain number of errors occur.
+- Enforcing a strict timeout limit for requests.
+
+These resilience strategies help ensure that the client continues to function gracefully even in the face of temporary network issues or server problems.
