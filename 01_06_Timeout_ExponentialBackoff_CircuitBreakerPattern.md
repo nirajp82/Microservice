@@ -322,6 +322,26 @@ The provided code snippet demonstrates how to configure resilience for HTTP requ
    - `Policy.TimeoutAsync<HttpResponseMessage>(1)`:
      - Instructs the policy to timeout requests that don't receive a response within 1 second.
 
+**Policy Order**
+In the context of configuring resilience for HTTP requests, the order of policy setup is crucial. Here's how policies are typically applied sequentially:
+
+1. **Retry Policy:** This policy attempts to automatically retry failed requests based on the defined strategy. It's the first line of defense against transient errors.
+2. **Circuit Breaker:**  This policy monitors the number of failures within a timeframe. If failures exceed a threshold, the circuit trips, preventing further requests for a configured duration. This protects downstream services from being overloaded by cascading failures.
+3. **Timeout Policy:** This policy enforces a maximum time limit for a request to receive a response. Requests exceeding the limit are considered failed.
+
+**Reasoning for the Order:**
+
+- **Retry Before Circuit Breaker:** Retrying a request might resolve the transient issue, avoiding the need to trip the circuit breaker and potentially impacting other requests.
+- **Circuit Breaker After Retry:** If retries fail consistently, the circuit breaker prevents further attempts until the service recovers, minimizing wasted effort and potential damage.
+- **Timeout Within Retry Policy:** Timeouts can be considered a type of transient error, so they might be retried within the retry policy limits. This gives the request a chance to succeed even if it takes slightly longer. However, if timeouts occur frequently, it might be a sign of a deeper issue that needs to be addressed separately.
+
+**Additional Considerations:**
+
+- Some frameworks or libraries might allow customizing the policy order. However, the order described above is generally recommended for handling transient errors and protecting services.
+- You might have other policies in your pipeline, such as authentication or authorization policies. These would typically be placed before the resilience policies to ensure proper access control before attempting a request.
+
+By following a well-defined policy setup order, you can create a more resilient system that gracefully handles temporary failures while protecting your services from overload.
+
 **In summary:**
 
 This code configures the `CatalogClient` to be resilient against failures by:
