@@ -1,7 +1,9 @@
 using System.Net;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Entities;
+using Play.Catalog.Contracts;
 using Play.Common;
 
 namespace Play.Catalog.Service.Controllers;
@@ -10,41 +12,27 @@ namespace Play.Catalog.Service.Controllers;
 [Route("items")]
 public class ItemsController : ControllerBase
 {
-    public readonly IRepository<Item> _itemsRepository;
+    private readonly IRepository<Item> _itemsRepository;
+    private readonly IPublishEndpoint _publishEndpoint;
     static int _requestCnt = 0;
 
-    public ItemsController(IRepository<Item> itemsRepository)
+    public ItemsController(IRepository<Item> itemsRepository, IPublishEndpoint publishEndpoint)
     {
         _itemsRepository = itemsRepository;
+        _publishEndpoint = publishEndpoint;
     }
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<ItemDto>>(StatusCodes.Status200OK)]
     public async Task<IResult> GetAsync()
     {
-        if (false)
-        {
+        bool isPollyTest = false;
+        if (isPollyTest)
             await ClientPollyTest();
-        }
+
         var result = (await _itemsRepository.GetAllAsync())
                         .Select(Item => Item.AsDto());
         return Results.Ok(result);
-    }
-
-    async Task ClientPollyTest()
-    {
-        _requestCnt++;
-        Console.WriteLine($"Request starting... Counter:{_requestCnt}");
-        if (_requestCnt <= 3)
-        {
-            Console.WriteLine($"Delaing Request... Counter:{_requestCnt}");
-            await Task.Delay(1500);
-        }
-        if (_requestCnt < 15)
-        {
-            Console.WriteLine($"Throw exception... Counter:{_requestCnt}");
-            throw new BadHttpRequestException($"Throw Bad request exception... Counter:{_requestCnt}", (int)HttpStatusCode.BadRequest);
-        }
     }
 
     // GET /items/{id}
@@ -74,6 +62,7 @@ public class ItemsController : ControllerBase
             CreatedDate = DateTimeOffset.UtcNow
         };
         await _itemsRepository.CreateAsync(item);
+        await _publishEndpoint.Publish(new CatalogItemCreated(item.Id, item.Name, item.Description));
         return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, createItemDto);
     }
 
@@ -94,6 +83,9 @@ public class ItemsController : ControllerBase
         existingItem.Price = updateItemDto.Price;
 
         await _itemsRepository.UpdateAsync(existingItem);
+
+        await _publishEndpoint.Publish(new CatalogItemUpdated(existingItem.Id, existingItem.Name, existingItem.Description));
+
         return Results.NoContent();
     }
 
@@ -109,6 +101,23 @@ public class ItemsController : ControllerBase
         }
 
         await _itemsRepository.RemoveAsync(id);
+        await _publishEndpoint.Publish(new CatalogItemDeleted(id));
         return Results.NoContent();
+    }
+
+    async Task ClientPollyTest()
+    {
+        _requestCnt++;
+        Console.WriteLine($"Request starting... Counter:{_requestCnt}");
+        if (_requestCnt <= 2)
+        {
+            Console.WriteLine($"Delaying Request... Counter:{_requestCnt}");
+            await Task.Delay(TimeSpan.FromSeconds(15));
+        }
+        if (_requestCnt <= 4)
+        {
+            Console.WriteLine($"Throw exception (500: Internal Server Error)... Counter:{_requestCnt} ");
+            throw new BadHttpRequestException($"Throw Bad request exception... Counter:{_requestCnt}", (int)HttpStatusCode.BadRequest);
+        }
     }
 }

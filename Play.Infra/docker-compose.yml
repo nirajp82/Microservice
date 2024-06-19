@@ -13,7 +13,7 @@ services:
     image: mongo
     container_name: mongo
     ports:
-      - "27017:27017"
+      - 27017:27017
     #Mounts a volume named mongodbdata to the container's /data/db directory. This volume is used to persist MongoDB data.
     volumes:
       # Named docker persistence volume: 
@@ -21,8 +21,19 @@ services:
       # volumeName:containerPath:ro
       - mongodbdata:/data/db
 
-# Volume for MongoDB data
-# This declares named volumes. These named volumes are managed by Docker and are not tied to a specific container.
-# Their declaration at the end of the Docker Compose file does not create them; instead, it makes Docker aware of their existence and their names. 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq_container
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmqdatavol:/var/lib/rabbitmq
+    hostname: rabbitmq
+
 volumes:
+  # Volume for MongoDB data
+  # This declares named volumes. These named volumes are managed by Docker and are not tied to a specific container.
+  # Their declaration at the end of the Docker Compose file does not create them; instead, it makes Docker aware of their existence and their names. 
   mongodbdata:
+  rabbitmqdatavol:
