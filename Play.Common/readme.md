@@ -1,8 +1,8 @@
 # Create a nuget package.
 ```ps1
 cd C:\MyProjects\Microservice\Play.Common\src\Play.Common\
-dotnet pack -o ..\..\..\packages
-# Output:   Successfully created package 'C:\MyProjects\Microservice\packages\Play.Common.1.0.0.nupkg'.
+dotnet pack -p:PackageVersion=1.0.1 -o ..\..\..\packages\
+# Output:  Successfully created package 'C:\Projects\Microservice\packages\Play.Common.1.0.1.nupkg'..
 ```
 This script is intended to create a NuGet package from a .NET project. 
 
@@ -20,4 +20,3 @@ dotnet nuget add source C:\MyProjects\Microservice\packages -n PlayEconomy
 cd .\src\Play.Catalog.Service\
 dotnet add package Play.Common
 ```
-
