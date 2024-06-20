@@ -1,22 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Play.Inventory.Service.Entities;
 using Play.Common.MongoDb;
 using Play.Common.Settings;
-using Play.Inventory.Service.Clients;
-using Play.Inventory.Service.Dtos;
-using Polly;
-using Polly.Extensions.Http;
-using Polly.Timeout;
+using Play.Common.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +13,13 @@ builder.Services.Configure<ServiceSettings>(serviceSettingsSection);
 // Register Mongo database and repository
 builder.Services
     .AddMongo()
-    .AddMongoRepo<InventoryItem>("items");
+    .AddMongoRepo<InventoryItem>("inventoryItems")
+    .AddMongoRepo<CatalogItem>("catalogItems")
+    .AddMassTransitWithRabbitMq();
 
 var randomJitter = new Random();
+
+/*Add Catalog Client
 
 //Create Typed clients, It will add the IHttpClientFactory and related services to the IServiceCollection.
 //https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory
@@ -78,7 +68,7 @@ builder.Services.AddHttpClient<CatalogClient>(cc =>
         ))
 //Timeout the request if not completed with in 1 seconds
 .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
-
+*/
 // Add services to the container.
 builder.Services.AddControllers(
     options =>
