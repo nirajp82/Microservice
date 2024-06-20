@@ -12,12 +12,13 @@ namespace Play.Inventory.Service.Controllers;
 public class ItemsController : ControllerBase
 {
     //The IHttpClientFactory will go ahead and create the typed client ("CatalogClient") as needed. 
-    public readonly CatalogClient _catalogClient;
+    //public readonly CatalogClient _catalogClient;
+    public readonly IRepository<CatalogItem> _catalogItemRepo;
     public readonly IRepository<InventoryItem> _inventoryItemRepo;
 
-    public ItemsController(CatalogClient catalogClient, IRepository<InventoryItem> inventoryItemRepo)
+    public ItemsController(IRepository<CatalogItem> catalogItemRepo, IRepository<InventoryItem> inventoryItemRepo)
     {
-        _catalogClient = catalogClient;
+        _catalogItemRepo = catalogItemRepo;
         _inventoryItemRepo = inventoryItemRepo;
     }
 
@@ -31,9 +32,9 @@ public class ItemsController : ControllerBase
             return Results.BadRequest();
         }
 
-        var catalogItems = await _catalogClient.GetCatalogItemsAsync();
-
         var inventoryItems = await _inventoryItemRepo.GetAllAsync(item => item.UserId == userId);
+        var catalogItemIds = inventoryItems.Select(i => i.CatalogItemId);
+        var catalogItems = await _catalogItemRepo.GetAllAsync(item => catalogItemIds.Contains(item.Id));
 
         var inventoryItemDtos = inventoryItems.Select(item =>
         {

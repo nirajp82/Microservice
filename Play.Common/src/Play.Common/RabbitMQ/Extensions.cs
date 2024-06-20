@@ -1,4 +1,5 @@
 using System.Reflection;
+using GreenPipes;
 using MassTransit;
 using MassTransit.Definition;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,10 @@ public static class Extensions
                  configurator.Host(rabbitMQSettings!.Host);
                  var endpointNameFormatter = new KebabCaseEndpointNameFormatter(serviceSettings!.ServiceName, false);
                  configurator.ConfigureEndpoints(context, endpointNameFormatter);
+                 configurator.UseMessageRetry(retryConfigurator =>
+                 {
+                     retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+                 });
              });
         });
 
