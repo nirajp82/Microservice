@@ -4,6 +4,7 @@ using Play.Common.MongoDb;
 using Play.Common.Settings;
 using Play.Common.RabbitMQ;
 
+const string ALLOWED_ORIGIN_SETTING = "AllowedOrigin";
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure ServiceSettings from appsettings.json, mapping configuration values to the ServiceSettings class.
@@ -89,6 +90,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(appBuilder =>
+    {
+        appBuilder.WithOrigins(builder.Configuration[ALLOWED_ORIGIN_SETTING])
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
 }
 
 app.UseHttpsRedirection();
