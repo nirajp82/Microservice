@@ -92,7 +92,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseCors(appBuilder =>
     {
-        appBuilder.WithOrigins(builder.Configuration[ALLOWED_ORIGIN_SETTING])
+        appBuilder.WithOrigins(builder.Configuration[ALLOWED_ORIGIN_SETTING]!)
         .AllowAnyHeader()
         .AllowAnyMethod();
     });
