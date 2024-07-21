@@ -24,8 +24,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private const decimal STARTING_GIL = 100;
-
+        private const decimal _STARTING_GIL = 100;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserStore<ApplicationUser> _userStore;
@@ -115,8 +114,8 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                ApplicationUser user = CreateUser();
-                user.Gil = STARTING_GIL;
+                var user = CreateUser();
+                user.Gil = _STARTING_GIL;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);

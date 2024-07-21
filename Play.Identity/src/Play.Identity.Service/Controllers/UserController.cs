@@ -6,7 +6,6 @@ using Play.Identity.Service.Dtos;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace Play.Identity.Service.Controller;
 
@@ -69,5 +68,4 @@ public class UsersController : ControllerBase
         await _userManager.DeleteAsync(user);
         return NoContent();
     }
-
 }

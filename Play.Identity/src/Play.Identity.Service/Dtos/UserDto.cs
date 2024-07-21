@@ -9,12 +9,3 @@ public record UserDto(
     Decimal Gil,
     DateTimeOffset CreatedDate
 );
-
-public record UpdateUserDto(
-    [Required]
-    [EmailAddress]
-    string Email,
-
-    [Range(0,1000000)]
-    Decimal Gil
-);
