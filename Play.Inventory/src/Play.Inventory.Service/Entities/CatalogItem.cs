@@ -1,4 +1,3 @@
-using System;
 using Play.Common;
 
 namespace Play.Inventory.Service.Entities;

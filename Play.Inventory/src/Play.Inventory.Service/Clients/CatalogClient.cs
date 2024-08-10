@@ -1,6 +1,3 @@
-using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Net.Http.Json;
 using Play.Inventory.Service.Dtos;
 
 namespace Play.Inventory.Service.Clients;
