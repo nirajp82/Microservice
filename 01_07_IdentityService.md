@@ -1,5 +1,19 @@
 # OAuth2: Overview and Usage for Securing Microservices
 
+## Table of Contents
+1. [What is OAuth2?](#what-is-oauth2)
+2. [OAuth 2.0 Flow and Key Parties](#the-oauth-20-flow-and-key-parties)
+3. [How OAuth2 Works](#how-oauth2-works)
+4. [OAuth2 Grant Types](#oauth2-grant-types)
+5. [Why Use OAuth2 to Secure Microservices?](#why-use-oauth2-to-secure-microservices)
+6. [Understanding OAuth2 Scope: A Real-World Example](#understanding-oauth2-scope-a-real-world-example)
+7. [OAuth 2.0 Authorization Code Flow with PKCE for PhotoShareApp](#oauth-20-authorization-code-flow-with-pkce-for-photoshareapp)
+8. [What is OpenID Connect (OIDC)?](#what-is-openid-connect-oidc)
+9. [The Problem OIDC Solves Over OAuth 2.0](#the-problem-oidc-solves-over-oauth-20)
+10. [The OIDC Flow](#the-oidc-flow)
+11. [Advantages of OpenID Connect](#advantages-of-openid-connect)
+12. [Summary](#summary)
+
 ## What is OAuth2?
 
 OAuth 2.0, short for "Open Authorization," is a widely recognized industry-standard protocol for authorization. It enables a Client App (such as a website or application) to access user resources hosted by other web applications on behalf of the user, all without exposing user passwords. OAuth2 is widely used for authorizing access to resources in a secure and controlled manner.
@@ -149,3 +163,59 @@ Certainly! Here’s a complete explanation of the OAuth 2.0 Authorization Code F
 Reference: https://xebia.com/blog/get-rid-of-client-secrets-with-oauth-authorization-code-pkce-flow/ 
 
 This diagram and explanation illustrate the OAuth 2.0 Authorization Code Flow with PKCE, detailing how **PhotoShareApp** securely obtains access to your photos on **SocialSnap** without exposing sensitive information.
+
+
+# OIDC
+### What is OpenID Connect (OIDC)?
+
+OpenID Connect (OIDC) is an identity layer built on top of the OAuth 2.0 protocol. It provides a way for applications to verify a user’s identity while still allowing them to gain access to the user’s resources. OIDC extends OAuth 2.0 by adding an additional token called the **ID Token**, which contains information about the user’s identity.
+
+### The Problem OIDC Solves Over OAuth 2.0
+
+OAuth 2.0 is designed primarily for authorization, allowing applications to request access to a user’s resources (like photos) without needing to know the user’s credentials. However, OAuth 2.0 does not inherently authenticate the user. This means that while an app can obtain permission to access a user's resources, it doesn’t necessarily know *who* the user is.
+
+#### Example: JohnDoe and JaneSmith
+
+Imagine JohnDoe is using PhotoShareApp, which connects to SocialSnap (a social media platform) via OAuth 2.0. After JohnDoe logs in to SocialSnap, PhotoShareApp receives an **Access Token** that allows it to access JohnDoe’s photos.
+
+Now, if JohnDoe shares this Access Token with JaneSmith, JaneSmith can use it to access JohnDoe’s photos through PhotoShareApp, even though she isn’t JohnDoe. Since OAuth 2.0 alone doesn’t require the app to know who the token belongs to, PhotoShareApp wouldn’t recognize that JaneSmith is using JohnDoe’s token—it just sees a valid token.
+
+### How OpenID Connect (OIDC) Addresses This Problem
+
+OIDC solves this issue by introducing an **ID Token** along with the Access Token. The ID Token contains information about the authenticated user, such as their unique identifier (user ID), and how they were authenticated.
+
+### The OIDC Flow
+
+The OIDC flow is very similar to the OAuth 2.0 flow, with an additional step for user authentication. Here’s how it works:
+
+1. **Authorization Request**: PhotoShareApp redirects JohnDoe to SocialSnap’s Authorization Server, requesting permission to access JohnDoe’s photos. PhotoShareApp also requests the `openid` scope, which indicates that it wants to authenticate the user and receive an ID Token.
+
+2. **User Authentication**: SocialSnap’s Authorization Server authenticates JohnDoe (e.g., via username and password).
+
+3. **Authorization Response**: If authentication is successful, SocialSnap’s Authorization Server sends back an Authorization Code to PhotoShareApp.
+
+4. **Token Exchange**: PhotoShareApp exchanges the Authorization Code for an Access Token and an ID Token by making a request to SocialSnap’s Token Endpoint.
+
+5. **ID Token and Access Token Received**: SocialSnap’s Token Endpoint returns both an Access Token (for accessing resources like photos) and an ID Token (which contains information about JohnDoe’s identity).
+
+6. **Access Resources and Verify Identity**: PhotoShareApp can now use the Access Token to retrieve JohnDoe’s photos from SocialSnap. Additionally, PhotoShareApp can verify JohnDoe’s identity using the ID Token to ensure that the token is being used by the correct person.
+
+#### Continuing the Example with OIDC
+
+In the earlier scenario, if PhotoShareApp was using OIDC, it would receive both an Access Token and an ID Token after JohnDoe logged in. The ID Token would contain information specific to JohnDoe, like his user ID.
+
+Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could check the ID Token and see that the identity associated with the token is JohnDoe, not JaneSmith. This would allow PhotoShareApp to detect the misuse and prevent JaneSmith from accessing JohnDoe’s photos.
+
+### Advantages of OpenID Connect
+
+1. **User Authentication**: OIDC ensures that the app knows who the user is, providing identity verification in addition to resource access.
+
+2. **Preventing Token Misuse**: The ID Token helps ensure that only the legitimate user can use the token, reducing the risk of token misuse.
+
+3. **Single Sign-On (SSO)**: OIDC supports Single Sign-On, enabling users to log in once and access multiple applications without needing to authenticate again.
+
+4. **Enhanced Security**: By adding an identity layer on top of OAuth 2.0, OIDC improves security, ensuring that resources are accessed only by the correct user.
+
+### Summary
+
+OpenID Connect extends OAuth 2.0 by adding user authentication through the ID Token, which allows applications to verify the identity of the user in addition to gaining access to their resources. The flow is similar to OAuth 2.0 but includes the `openid` scope and the additional step of receiving and verifying the ID Token. This helps prevent scenarios where tokens could be misused by unauthorized users, as shown in the example of JohnDoe and JaneSmith.
