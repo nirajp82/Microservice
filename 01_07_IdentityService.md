@@ -18,7 +18,7 @@
 
 OAuth 2.0, short for "Open Authorization," is a widely recognized industry-standard protocol for authorization. It enables a Client App (such as a website or application) to access user resources hosted by other web applications on behalf of the user, all without exposing user passwords. OAuth2 is widely used for authorizing access to resources in a secure and controlled manner.
 
-## The OAuth 2.0 flow typically involves the following parties:
+## The OAuth 2.0 Flow and Key Parties
 
 * **Resource Owner:** The user or entity that owns the data.
 * **Client:** The application requesting access to the resource owner's data.
