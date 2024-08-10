@@ -41,11 +41,14 @@ OAuth2 operates through a series of interactions between a user, an authorizatio
 
 6. **Token Validation**: The resource server validates the access token before granting access to the requested resources.
 
+## OAuth2 Grant Types
+
 OAuth2 supports several grant types, including:
 - **Authorization Code**: Suitable for web applications with server-side components.
 - **Implicit**: Suitable for single-page applications (SPAs) running in a user's browser.
 - **Resource Owner Password Credentials**: Suitable for trusted applications where the user’s credentials are directly used.
 - **Client Credentials**: Suitable for machine-to-machine communication.
+
 
 ## Why Use OAuth2 to Secure Microservices?
 
