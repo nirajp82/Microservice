@@ -1,0 +1,98 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Catalog.Service", "Play.Catalog\src\Play.Catalog.Service\Play.Catalog.Service.csproj", "{2FB247FA-5583-4874-8E5C-6C509F597C6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Catalog", "Play.Catalog", "{CC5E7850-AE23-409E-BF29-5F9981EE89E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Catalog.Contracts", "Play.Catalog\src\Play.Catalog.Contracts\Play.Catalog.Contracts.csproj", "{211448CC-7197-46F8-908E-BD4235144F3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Common", "Play.Common", "{D553CE4F-6CA5-4EA5-B1BE-F7B3F477A9F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Common", "Play.Common\src\Play.Common\Play.Common.csproj", "{24C6B26F-C03E-45A8-B6FA-C516EDF846C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Identity", "Play.Identity", "{7EF0D030-175E-41A6-AB5B-1BEDF3B0E8C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Identity.Service", "Play.Identity\src\Play.Identity.Service\Play.Identity.Service.csproj", "{5D27B5F8-8287-4822-849E-4B06F87A7269}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "src", "Play.Frontend\src\", "{C421E065-B686-4D0C-A2DE-7F97D08F884C}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8.1"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_54777"
+		Debug.AspNetCompiler.PhysicalPath = "Play.Frontend\src\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_54777\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_54777"
+		Release.AspNetCompiler.PhysicalPath = "Play.Frontend\src\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_54777\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "54777"
+		SlnRelativePath = "Play.Frontend\src\"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Frontend", "Play.Frontend", "{93DBEB68-7896-41B2-8375-CD77FE21B104}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Infra", "Play.Infra", "{97C7347D-FE37-4097-960C-E8F393C675CA}"
+	ProjectSection(SolutionItems) = preProject
+		Play.Infra\docker-compose.yml = Play.Infra\docker-compose.yml
+		Play.Infra\readme.md = Play.Infra\readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Inventory", "Play.Inventory", "{B8E58762-5A6F-4F5F-84B0-08D9EE108E3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Inventory.Service", "Play.Inventory\src\Play.Inventory.Service\Play.Inventory.Service.csproj", "{4970C834-7D0E-4E58-9DAA-724868E7FF15}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FB247FA-5583-4874-8E5C-6C509F597C6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FB247FA-5583-4874-8E5C-6C509F597C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FB247FA-5583-4874-8E5C-6C509F597C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FB247FA-5583-4874-8E5C-6C509F597C6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{211448CC-7197-46F8-908E-BD4235144F3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{211448CC-7197-46F8-908E-BD4235144F3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{211448CC-7197-46F8-908E-BD4235144F3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{211448CC-7197-46F8-908E-BD4235144F3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24C6B26F-C03E-45A8-B6FA-C516EDF846C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24C6B26F-C03E-45A8-B6FA-C516EDF846C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24C6B26F-C03E-45A8-B6FA-C516EDF846C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24C6B26F-C03E-45A8-B6FA-C516EDF846C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D27B5F8-8287-4822-849E-4B06F87A7269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D27B5F8-8287-4822-849E-4B06F87A7269}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D27B5F8-8287-4822-849E-4B06F87A7269}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D27B5F8-8287-4822-849E-4B06F87A7269}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C421E065-B686-4D0C-A2DE-7F97D08F884C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C421E065-B686-4D0C-A2DE-7F97D08F884C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C421E065-B686-4D0C-A2DE-7F97D08F884C}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{C421E065-B686-4D0C-A2DE-7F97D08F884C}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{4970C834-7D0E-4E58-9DAA-724868E7FF15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4970C834-7D0E-4E58-9DAA-724868E7FF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4970C834-7D0E-4E58-9DAA-724868E7FF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4970C834-7D0E-4E58-9DAA-724868E7FF15}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2FB247FA-5583-4874-8E5C-6C509F597C6F} = {CC5E7850-AE23-409E-BF29-5F9981EE89E5}
+		{211448CC-7197-46F8-908E-BD4235144F3A} = {CC5E7850-AE23-409E-BF29-5F9981EE89E5}
+		{24C6B26F-C03E-45A8-B6FA-C516EDF846C1} = {D553CE4F-6CA5-4EA5-B1BE-F7B3F477A9F5}
+		{5D27B5F8-8287-4822-849E-4B06F87A7269} = {7EF0D030-175E-41A6-AB5B-1BEDF3B0E8C7}
+		{C421E065-B686-4D0C-A2DE-7F97D08F884C} = {93DBEB68-7896-41B2-8375-CD77FE21B104}
+		{4970C834-7D0E-4E58-9DAA-724868E7FF15} = {B8E58762-5A6F-4F5F-84B0-08D9EE108E3A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83FF415A-C5D2-4DA8-A3DD-9CD36DB3F8F8}
+	EndGlobalSection
+EndGlobal
