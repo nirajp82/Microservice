@@ -2,7 +2,7 @@
 
 ## What is OAuth2?
 
-OAuth2 (Open Authorization 2) is an industry-standard protocol for authorization. It allows applications to obtain limited access to user accounts on an HTTP service, such as Google, Facebook, or GitHub, without exposing user passwords. OAuth2 is widely used for authorizing access to resources in a secure and controlled manner.
+OAuth 2.0, short for "Open Authorization," is a widely recognized industry-standard protocol for authorization. It enables a Client App (such as a website or application) to access user resources hosted by other web applications on behalf of the user, all without exposing user passwords. OAuth2 is widely used for authorizing access to resources in a secure and controlled manner.
 
 ## The OAuth 2.0 flow typically involves the following parties:
 
