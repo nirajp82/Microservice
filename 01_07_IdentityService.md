@@ -11,8 +11,11 @@
 8. [What is OpenID Connect (OIDC)?](#what-is-openid-connect-oidc)
 9. [The Problem OIDC Solves Over OAuth 2.0](#the-problem-oidc-solves-over-oauth-20)
 10. [The OIDC Flow](#the-oidc-flow)
-11. [Advantages of OpenID Connect](#advantages-of-openid-connect)
-12. [Summary](#summary)
+11. [**Verification of ID Token by the Client**](#verification-of-id-token-by-the-client)
+12. [**Role of the Authorization Server in OIDC**](#role-of-the-authorization-server-in-oidc)
+13. [**Resource Server's Role in OIDC**](#resource-servers-role-in-oidc)
+14. [Advantages of OpenID Connect](#advantages-of-openid-connect)
+15. [Summary](#summary)
 
 ## What is OAuth2?
 
@@ -208,6 +211,21 @@ The OIDC flow is very similar to the OAuth 2.0 flow, with an additional step for
 In the earlier scenario, if PhotoShareApp was using OIDC, it would receive both an Access Token and an ID Token after JohnDoe logged in. The ID Token would contain information specific to JohnDoe, like his user ID.
 
 Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could check the ID Token and see that the identity associated with the token is JohnDoe, not JaneSmith. This would allow PhotoShareApp to detect the misuse and prevent JaneSmith from accessing JohnDoe’s photos.
+
+#### **Verification of ID Token by the Client**
+   - **Signature Verification:** The ID Token is signed by the Authorization Server (e.g., SocialSnap). The PhotoSharing app, acting as the Client, uses the public key provided by SocialSnap to verify the signature, ensuring the token hasn’t been altered.
+   - **Issuer Validation:** The app checks that the `iss` (issuer) claim in the ID Token matches SocialSnap’s URL.
+   - **Audience Validation:** The app verifies that the `aud` (audience) claim in the ID Token matches its own client ID, ensuring the token was intended for the app.
+   - **Expiration Check:** The app checks the `exp` (expiration time) claim to ensure the token is still valid.
+   - **Nonce Check:** If the app included a nonce during the authorization request, it verifies that the nonce in the ID Token matches, protecting against replay attacks.
+
+#### **Role of the Authorization Server in OIDC**
+   - **Issuing ID Tokens:** The Authorization Server (SocialSnap) issues and signs the ID Token, including claims that represent the authenticated user’s identity.
+   - **Providing Public Keys:** The Authorization Server publishes its public keys in its metadata, allowing Clients like the PhotoSharing app to verify the ID Token’s signature.
+
+#### **Resource Server's Role in OIDC**
+   - **Verifying Access Tokens:** The Resource Server (SocialSnap’s photo storage server) is primarily concerned with verifying Access Tokens to determine if the Client can access specific resources. 
+   - **ID Token Usage:** While the Resource Server typically doesn’t verify the ID Token, it relies on the Access Token, which was obtained based on the ID Token, ensuring that resource access is granted only to authorized entities.
 
 ### Advantages of OpenID Connect
 
