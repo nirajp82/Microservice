@@ -145,56 +145,7 @@ Certainly! Here’s a complete explanation of the OAuth 2.0 Authorization Code F
    - **PhotoShareApp** uses the **Access Token** to make requests to SocialSnap’s **Resource Server**. The **Resource Server** checks the token’s validity and grants or denies access to your photos based on the token's permissions.
 
 ### Diagram
-
-```plaintext
-+----------------+                           +----------------------+
-|                |                           |                      |
-|  Resource      |                           |  Authorization       |
-|  Owner         |                           |  Server              |
-|  (You)         |                           |  (SocialSnap)        |
-|                |                           |                      |
-+--------+-------+                           +-----------+----------+
-         |                                               |
-         | 1. Generate Code Verifier and Code Challenge   |
-         |                                               |
-         |                                               |
-         | 2. Authorization Request (includes Code        |
-         |    Challenge)                                  |
-         |---------------------------------------------->|
-         |                                               |
-         |   +-----------------------------------+       |
-         |   |                                   |       |
-         |   | Consent Screen                    |       |
-         |   |                                   |       |
-         |   +-----------------------------------+       |
-         |                                               |
-         |   |                                   |       |
-         |   | 4. Authorization Code             |       |
-         |<----------------------------------------------|
-         |                                               |
-         |                                               |
-         | 5. Access Token Request (includes Code        |
-         |    Verifier + Authorization Code)             |
-         |---------------------------------------------->|
-         |                                               |
-         |   +-----------------------------------+       |
-         |   |                                   |       |
-         |   | 6. Access Token                   |       |
-         |   |                                   |       |
-         |<----------------------------------------------|
-         |                                               |
-         |                                               |
-         | 7. Resource Access                         |
-         |---------------------------------------------->|
-         |                                               |
-+--------+-------+                           +-----------+----------+
-|                |                           |                      |
-|  Client        |                           |  Resource Server     |
-|  (PhotoShareApp)|                           |  (SocialSnap)        |
-|                |                           |                      |
-+----------------+                           +----------------------+
-```
-
----
+![image](https://github.com/user-attachments/assets/bed8b70f-e013-41b6-81e9-b8469051a684)
+Reference: https://xebia.com/blog/get-rid-of-client-secrets-with-oauth-authorization-code-pkce-flow/ 
 
 This diagram and explanation illustrate the OAuth 2.0 Authorization Code Flow with PKCE, detailing how **PhotoShareApp** securely obtains access to your photos on **SocialSnap** without exposing sensitive information.
