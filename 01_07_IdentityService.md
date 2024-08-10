@@ -133,10 +133,10 @@ Certainly! Here’s a complete explanation of the OAuth 2.0 Authorization Code F
    - The **Authorization Server** presents a consent screen to you, the Resource Owner, detailing the permissions **PhotoShareApp** is requesting. You decide whether to approve or deny these permissions.
 
 4. **Authorization Grant**:
-   - If you grant permission, SocialSnap’s **Authorization Server** sends an **Authorization Code** to **PhotoShareApp** via the redirect URI.
+   - If you grant permission, SocialSnap’s **Authorization Server** sends an **Authorization Code** to **PhotoShareApp** via the redirect URI. This **Authorization Code** is valid for very short duration of the time like 10 minute or so and good for only one use.
 
 5. **Access Token Request**:
-   - **PhotoShareApp** exchanges the **Authorization Code** for an **Access Token** by sending a request to the **Authorization Server**. This request includes the original **Code Verifier**.
+   - **PhotoShareApp** exchanges the **Authorization Code** for an **Access Token** by sending a request to the **Authorization Server**. This request includes the original **Code Verifier** along with **Authorization Code**.
 
 6. **Access Token Response**:
    - The **Authorization Server** validates the **Code Verifier** against the **Code Challenge** used in the initial authorization request. If they match, the **Authorization Server** issues an **Access Token** and sends it back to **PhotoShareApp**.
@@ -173,8 +173,8 @@ Certainly! Here’s a complete explanation of the OAuth 2.0 Authorization Code F
          |<----------------------------------------------|
          |                                               |
          |                                               |
-         | 5. Access Token Request (includes Code       |
-         |    Verifier)                                 |
+         | 5. Access Token Request (includes Code        |
+         |    Verifier + Authorization Code)             |
          |---------------------------------------------->|
          |                                               |
          |   +-----------------------------------+       |
