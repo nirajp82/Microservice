@@ -8,14 +8,19 @@
 5. [Why Use OAuth2 to Secure Microservices?](#why-use-oauth2-to-secure-microservices)
 6. [Understanding OAuth2 Scope: A Real-World Example](#understanding-oauth2-scope-a-real-world-example)
 7. [OAuth 2.0 Authorization Code Flow with PKCE for PhotoShareApp](#oauth-20-authorization-code-flow-with-pkce-for-photoshareapp)
-8. [What is OpenID Connect (OIDC)?](#what-is-openid-connect-oidc)
-9. [The Problem OIDC Solves Over OAuth 2.0](#the-problem-oidc-solves-over-oauth-20)
-10. [The OIDC Flow](#the-oidc-flow)
-11. [**Verification of ID Token by the Client**](#verification-of-id-token-by-the-client)
-12. [**Role of the Authorization Server in OIDC**](#role-of-the-authorization-server-in-oidc)
-13. [**Resource Server's Role in OIDC**](#resource-servers-role-in-oidc)
-14. [Advantages of OpenID Connect](#advantages-of-openid-connect)
-15. [Summary](#summary)
+8. **************************
+9. [What is OpenID Connect (OIDC)?](#what-is-openid-connect-oidc)
+10. [The Problem OIDC Solves Over OAuth 2.0](#the-problem-oidc-solves-over-oauth-20)
+11. [The OIDC Flow](#the-oidc-flow)
+12. [**Verification of ID Token by the Client**](#verification-of-id-token-by-the-client)
+13. [**Role of the Authorization Server in OIDC**](#role-of-the-authorization-server-in-oidc)
+14. [**Resource Server's Role in OIDC**](#resource-servers-role-in-oidc)
+15. [Advantages of OpenID Connect](#advantages-of-openid-connect)
+16. *************************
+17. [**Introduction to IdentityServer**](#introduction-to-identityserver)
+18. [**IdentityServer Middleware Endpoints**](#identityserver-middleware-endpoints)
+19. [**What is Duende IdentityServer?**](#What-is-Duende-identityserver)
+20. [Summary](#summary)
 
 ## What is OAuth2?
 
@@ -240,3 +245,52 @@ Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could che
 ### Summary
 
 OpenID Connect extends OAuth 2.0 by adding user authentication through the ID Token, which allows applications to verify the identity of the user in addition to gaining access to their resources. The flow is similar to OAuth 2.0 but includes the `openid` scope and the additional step of receiving and verifying the ID Token. This helps prevent scenarios where tokens could be misused by unauthorized users, as shown in the example of JohnDoe and JaneSmith.
+*******************************
+
+## Introduction to IdentityServer
+#### What is Identity Server
+IdentityServer is an authentication server that implements OpenID Connect (OIDC) and OAuth 2.0 standards for ASP.NET Core. It's designed to provide a common way to authenticate requests to all of your applications, whether they're web, native, mobile, or API endpoints. IdentityServer can be used to implement Single Sign-On (SSO) for multiple applications and application types. 
+IdentityServer is used for building OpenID Connect and OAuth 2.0 solutions. It provides a comprehensive implementation of these protocols, which are widely used for managing authentication and authorization in web applications and APIs.
+
+## IdentityServer Middleware Endpoints
+
+IdentityServer exposes several key endpoints to support standard functionality. Each endpoint plays a specific role in handling authentication, token management, and user information. Below is a summary of these endpoints:
+
+1. **Authorize**
+   - **Purpose**: Authenticate the end user.
+   - **Description**: Used to initiate the authentication process. The user is redirected to this endpoint to log in and grant consent to the client application.
+
+2. **Token**
+   - **Purpose**: Request a token programmatically.
+   - **Description**: This endpoint allows clients to request access tokens, refresh tokens, and ID tokens using authorization grants (e.g., authorization code, client credentials).
+
+3. **Discovery**
+   - **Purpose**: Provide metadata about the server.
+   - **Description**: Exposes metadata about the IdentityServer instance, including information on available endpoints, supported scopes, and more. This is usually available at the `.well-known/openid-configuration` URL.
+
+4. **User Info**
+   - **Purpose**: Retrieve user information with a valid access token.
+   - **Description**: Allows clients to obtain user profile information using a valid access token. This endpoint provides details such as user name, email, and other claims.
+
+5. **Device Authorization**
+   - **Purpose**: Start device flow authorization.
+   - **Description**: Supports the device authorization flow, allowing devices with limited input capabilities (e.g., smart TVs) to obtain tokens.
+
+6. **Introspection**
+   - **Purpose**: Validate tokens.
+   - **Description**: Used to check the validity of access tokens or refresh tokens. Clients can use this endpoint to verify the status and metadata of tokens.
+
+7. **Revocation**
+   - **Purpose**: Revoke tokens.
+   - **Description**: Allows clients to invalidate access or refresh tokens, effectively ending the session for the associated user.
+
+8. **End Session**
+   - **Purpose**: Trigger single sign-out across all applications.
+   - **Description**: Initiates the logout process, which can include terminating sessions in all applications where the user is currently signed in.
+
+These endpoints are integral to managing authentication and authorization processes effectively in applications using IdentityServer.
+
+#### What is Duende IdentityServer?
+      Duende IdentityServer is an enterprise-grade identity and access management (IAM) solution for .NET applications. It is built on the same foundation as the open-source IdentityServer4, but with additional features, support, and licensing options for commercial use. Duende IdentityServer is designed to offer robust, secure, and scalable solutions for handling authentication and authorization.
+
+
