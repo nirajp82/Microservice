@@ -8,3 +8,5 @@ Once you have defined your application's services in the `docker-compose.yml` fi
 
 Docker Compose makes it easier to orchestrate complex multi-container applications, simplifying development, testing, and deployment processes. It abstracts away the complexity of managing multiple containers and their dependencies, allowing developers to focus on building and iterating on their applications.
 
+* - Run Docker Compose file.
+	-  docker-compose up -d

@@ -30,6 +30,7 @@ namespace Play.Identity.Service
 
             var serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
             var mongoDbSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+            var identityServerSettings = Configuration.GetSection(nameof(IdentityServerSettings)).Get<IdentityServerSettings>();
 
             // Registers the default ASP.NET Core Identity services for managing users and roles in the application.
             services.AddDefaultIdentity<ApplicationUser>()
@@ -41,6 +42,22 @@ namespace Play.Identity.Service
                     mongoDbSettings.ConnectionString,
                     serviceSettings.ServiceName
                 );
+
+            //sets up the IdentityServer middleware in your ASP.NET Core application, which will handle authentication and authorization tasks.
+            services.AddIdentityServer((options =>
+            {
+                options.Events.RaiseSuccessEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseErrorEvents = true;
+            }))
+            //Integrates IdentityServer with ASP.NET Core Identity. It specifies that IdentityServer should use the ApplicationUser class for user management, which is typically your application's user entity.
+            .AddAspNetIdentity<ApplicationUser>()
+            // Configures IdentityServer to use in-memory storage for API scopes. ApiScopes define the permissions or resources that clients can request access to.
+            .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
+            //Configures IdentityServer to use in-memory storage for client definitions. Clients are applications that request tokens from IdentityServer.
+            .AddInMemoryClients(identityServerSettings.Clients)
+            // Configures IdentityServer to use in-memory storage for identity resources. Identity resources define the claims about the user that can be requested by clients.
+            .AddInMemoryIdentityResources(identityServerSettings.IdentityResources);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -64,6 +81,8 @@ namespace Play.Identity.Service
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseIdentityServer();
 
             app.UseAuthorization();
 

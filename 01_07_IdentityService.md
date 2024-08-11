@@ -15,7 +15,7 @@
 12. [**Verification of ID Token by the Client**](#verification-of-id-token-by-the-client)
 13. [**Role of the Authorization Server in OIDC**](#role-of-the-authorization-server-in-oidc)
 14. [**Resource Server's Role in OIDC**](#resource-servers-role-in-oidc)
-15. [Advantages of OpenID Connect](#advantages-of-openid-connect)
+15, [What is the difference between Bearer and ID Token](#what-is-the-difference-between-bearer-and-id-token)
 16. *************************
 17. [**Introduction to IdentityServer**](#introduction-to-identityserver)
 18. [**IdentityServer Middleware Endpoints**](#identityserver-middleware-endpoints)
@@ -232,15 +232,27 @@ Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could che
    - **Verifying Access Tokens:** The Resource Server (SocialSnap’s photo storage server) is primarily concerned with verifying Access Tokens to determine if the Client can access specific resources. 
    - **ID Token Usage:** While the Resource Server typically doesn’t verify the ID Token, it relies on the Access Token, which was obtained based on the ID Token, ensuring that resource access is granted only to authorized entities.
 
-### Advantages of OpenID Connect
+#### What is the difference between Bearer and ID Token
 
-1. **User Authentication**: OIDC ensures that the app knows who the user is, providing identity verification in addition to resource access.
+	The Bearer tokens generated and used in the same API. This approach is fine for simple setups, like a single API with a frontend on the same domain. However, in a more complex environment like a microservices architecture, where you have multiple services and clients (sometimes ones you don’t own), using OIDC (OpenID Connect) tokens is preferred. Here’s why:
 
-2. **Preventing Token Misuse**: The ID Token helps ensure that only the legitimate user can use the token, reducing the risk of token misuse.
+	1. **Standardization:** OIDC is built on OAuth 2.0 and follows industry standards, making it compatible with many services and tools.
 
-3. **Single Sign-On (SSO)**: OIDC supports Single Sign-On, enabling users to log in once and access multiple applications without needing to authenticate again.
+	2. **User Authentication**: OIDC ensures that the app knows who the user is, providing identity verification in addition to resource access.
 
-4. **Enhanced Security**: By adding an identity layer on top of OAuth 2.0, OIDC improves security, ensuring that resources are accessed only by the correct user.
+	3. **Preventing Token Misuse**: The ID Token helps ensure that only the legitimate user can use the token, reducing the risk of token misuse.
+
+	4. **Enhanced Security:** OIDC offers features like token introspection and revocation, plus public/private key validation, which enhance security and help prevent token forgery.  By adding an identity layer on top of OAuth 2.0, OIDC improves security, ensuring that resources are accessed only by the correct user.
+
+	5. **Single Sign-On (SSO):** OIDC supports SSO, allowing users to log in once and access multiple services without re-authenticating, improving user experience and reducing credential management.
+
+	6. **Separation of Concerns:** OIDC handles authentication through an identity provider (IdP), so your API doesn’t need to manage sensitive credentials, lowering security risks and compliance issues.
+
+	7. **Scalability and Flexibility:** OIDC works well in distributed environments and integrates easily with various identity providers, making it scalable and adaptable.
+
+	8. **Rich User Information:** OIDC tokens can include detailed user information (claims) for personalization and authorization without extra database queries.
+
+	For a microservices setup, OIDC tokens are the better choice. For simpler scenarios, basic bearer tokens might suffice.
 
 ### Summary
 
@@ -259,14 +271,16 @@ IdentityServer exposes several key endpoints to support standard functionality. 
 1. **Authorize**
    - **Purpose**: Authenticate the end user.
    - **Description**: Used to initiate the authentication process. The user is redirected to this endpoint to log in and grant consent to the client application.
+   - **Request**: GET https://localhost:5003/connect/authorize?response_type=code&client_id=postman&scope=openid&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&code_challenge=9BdrzC3O7f-eOr15iXJgAXOUY9_6cvUcpzLoYvZPCOg&code_challenge_method=S256
 
 2. **Token**
    - **Purpose**: Request a token programmatically.
    - **Description**: This endpoint allows clients to request access tokens, refresh tokens, and ID tokens using authorization grants (e.g., authorization code, client credentials).
+   - **Request**: **Request**: POST https://localhost:5003/connect/token
 
 3. **Discovery**
    - **Purpose**: Provide metadata about the server.
-   - **Description**: Exposes metadata about the IdentityServer instance, including information on available endpoints, supported scopes, and more. This is usually available at the `.well-known/openid-configuration` URL.
+   - **Description**: Exposes metadata about the IdentityServer instance, including information on available endpoints, supported scopes, and more. This is usually available at the `.well-known/openid-configuration` URL. For ex: https://localhost:5003/.well-known/openid-configuration
 
 4. **User Info**
    - **Purpose**: Retrieve user information with a valid access token.
