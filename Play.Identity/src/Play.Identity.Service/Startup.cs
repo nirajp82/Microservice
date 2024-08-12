@@ -43,20 +43,31 @@ namespace Play.Identity.Service
                     serviceSettings.ServiceName
                 );
 
-            //sets up the IdentityServer middleware in your ASP.NET Core application, which will handle authentication and authorization tasks.
-            services.AddIdentityServer((options =>
+            // Configures the IdentityServer middleware in your ASP.NET Core application.
+            // IdentityServer is used for handling authentication and authorization, issuing tokens, and managing user claims.
+            services.AddIdentityServer(options =>
             {
+                // Configures IdentityServer to raise events for successful, failed, and erroneous authentication operations.
                 options.Events.RaiseSuccessEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseErrorEvents = true;
-            }))
-            //Integrates IdentityServer with ASP.NET Core Identity. It specifies that IdentityServer should use the ApplicationUser class for user management, which is typically your application's user entity.
+            })
+            // Integrates IdentityServer with ASP.NET Core Identity.
+            // Specifies that IdentityServer should use the ApplicationUser class for user management.
+            // ApplicationUser typically represents your application's user entity and allows IdentityServer to authenticate users
+            // using the same user store as ASP.NET Core Identity.
             .AddAspNetIdentity<ApplicationUser>()
-            // Configures IdentityServer to use in-memory storage for API scopes. ApiScopes define the permissions or resources that clients can request access to.
+            // API scopes define the permissions or resources that clients can request access to.
+            // The scopes are defined in the appsettings.json or appsettings.Development.json configuration files.
             .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
-            //Configures IdentityServer to use in-memory storage for client definitions. Clients are applications that request tokens from IdentityServer.
+            // API resources represent the APIs that IdentityServer is protecting. Each API resource can have one or more scopes associated with it.
+            // The API resources are defined in the appsettings.json configuration file.
+            .AddInMemoryApiResources(identityServerSettings.ApiResources)
+            // Clients are applications or services that request tokens from IdentityServer.
+            // The client information is defined in the appsettings.Development.json configuration file, allowing different configurations for development environments.
             .AddInMemoryClients(identityServerSettings.Clients)
-            // Configures IdentityServer to use in-memory storage for identity resources. Identity resources define the claims about the user that can be requested by clients.
+            // Identity resources represent the claims about the user that clients can request, such as user profile information.
+            // The identity resources are defined in the appsettings.Development.json configuration file.
             .AddInMemoryIdentityResources(identityServerSettings.IdentityResources);
 
             services.AddControllers();

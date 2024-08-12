@@ -21,7 +21,10 @@
 18. [**IdentityServer Middleware Endpoints**](#identityserver-middleware-endpoints)
 19. [**What is Duende IdentityServer?**](#What-is-Duende-identityserver)
 20. [Summary](#summary)
+21. *************************
+22. [Explain What a JSON Web Token (JWT) Is and How It Works](#explain-what-a-json-web-token-jwt-is-and-how-it-works)
 
+---
 ## What is OAuth2?
 
 OAuth 2.0, short for "Open Authorization," is a widely recognized industry-standard protocol for authorization. It enables a Client App (such as a website or application) to access user resources hosted by other web applications on behalf of the user, all without exposing user passwords. OAuth2 is widely used for authorizing access to resources in a secure and controlled manner.
@@ -234,7 +237,8 @@ Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could che
 
 #### What is the difference between Bearer and ID Token
 
-	The Bearer tokens generated and used in the same API. This approach is fine for simple setups, like a single API with a frontend on the same domain. However, in a more complex environment like a microservices architecture, where you have multiple services and clients (sometimes ones you don’t own), using OIDC (OpenID Connect) tokens is preferred. Here’s why:
+	The generation of bearer tokens directly in the same API that later will use authorize requests based on those tokens. This approach is fine for simple setups, like a single API with a frontend on the same domain. However, in a more complex environment like a microservices architecture, where you have multiple services and clients (sometimes ones you don’t own), using OIDC (OpenID Connect) tokens is preferred. Here’s why:
+
 
 	1. **Standardization:** OIDC is built on OAuth 2.0 and follows industry standards, making it compatible with many services and tools.
 
@@ -257,6 +261,7 @@ Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could che
 ### Summary
 
 OpenID Connect extends OAuth 2.0 by adding user authentication through the ID Token, which allows applications to verify the identity of the user in addition to gaining access to their resources. The flow is similar to OAuth 2.0 but includes the `openid` scope and the additional step of receiving and verifying the ID Token. This helps prevent scenarios where tokens could be misused by unauthorized users, as shown in the example of JohnDoe and JaneSmith.
+
 *******************************
 
 ## Introduction to IdentityServer
@@ -271,8 +276,8 @@ IdentityServer exposes several key endpoints to support standard functionality. 
 1. **Authorize**
    - **Purpose**: Authenticate the end user.
    - **Description**: Used to initiate the authentication process. The user is redirected to this endpoint to log in and grant consent to the client application.
-   - **Request**: GET https://localhost:5003/connect/authorize?response_type=code&client_id=postman&scope=openid&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&code_challenge=9BdrzC3O7f-eOr15iXJgAXOUY9_6cvUcpzLoYvZPCOg&code_challenge_method=S256
-
+   - **Request**: GET GET https://localhost:5003/connect/authorize?response_type=code&client_id=postman&scope=openid%20profile%20catalog.fullaccess&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&code_challenge=bK_JI8FLLclnGONSAWCsSyEXlS_FoD7LSCvSU_kAO8k&code_challenge_method=S256
+   
 2. **Token**
    - **Purpose**: Request a token programmatically.
    - **Description**: This endpoint allows clients to request access tokens, refresh tokens, and ID tokens using authorization grants (e.g., authorization code, client credentials).
@@ -307,4 +312,32 @@ These endpoints are integral to managing authentication and authorization proces
 #### What is Duende IdentityServer?
       Duende IdentityServer is an enterprise-grade identity and access management (IAM) solution for .NET applications. It is built on the same foundation as the open-source IdentityServer4, but with additional features, support, and licensing options for commercial use. Duende IdentityServer is designed to offer robust, secure, and scalable solutions for handling authentication and authorization.
 
+*******************************
 
+#### Explain what a JSON Web Token (JWT) is and how it works?
+
+JSON Web Token, or JWT, is a standardized format used for securely transmitting information between parties as a JSON object. It's widely used for authentication and authorization purposes. 
+
+A JWT is composed of three parts:
+
+1. **Header**: This part usually consists of two elements: the type of token (which is JWT) and the signing algorithm being used, such as HMAC SHA256 or RSA.
+
+2. **Payload**: This contains the claims, which are statements about an entity (typically the user) and additional data. Claims can be of three types:
+   - **Registered Claims**: These are predefined claims like `sub` (subject), `exp` (expiration), and `iat` (issued at).
+   - **Public Claims**: These are custom claims that can be defined by the user and should be registered to avoid collisions.
+   - **Private Claims**: Custom claims agreed upon by the parties using the JWT.
+
+3. **Signature**: To create the signature part, you take the encoded header and payload, combine them with a secret key (or private key in the case of asymmetric algorithms), and apply the specified algorithm. This signature ensures that the token hasn’t been altered and verifies its authenticity.
+
+**How it works in practice**:
+- **Authentication**: When a user logs in, the server generates a JWT that includes information about the user and their permissions. This token is sent to the client, which stores it (often in local storage or cookies).
+- **Authorization**: For subsequent requests, the client includes the JWT in the `Authorization` header of the HTTP request, typically using the `Bearer` schema. The server then validates the JWT's signature and extracts the user’s information and claims from the payload to authorize access to resources.
+
+**Benefits**:
+- **Stateless**: The server does not need to store session state, as all the necessary information is contained within the token.
+- **Decentralized**: JWTs can be easily passed between different systems and services, which is useful in microservices architectures.
+
+**Considerations**:
+- **Security**: Since JWTs contain sensitive information, they should be transmitted over secure channels (like HTTPS), and the signing key must be kept confidential to prevent unauthorized access.
+
+In summary, JWTs are a powerful tool for managing user authentication and authorization in a stateless manner, enhancing both security and scalability in distributed systems.

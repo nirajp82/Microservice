@@ -5,11 +5,13 @@ using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Entities;
 using Play.Catalog.Contracts;
 using Play.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Play.Catalog.Service.Controllers;
 
 [ApiController]
 [Route("items")]
+[Authorize]
 public class ItemsController : ControllerBase
 {
     private readonly IRepository<Item> _itemsRepository;
