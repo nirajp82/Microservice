@@ -70,6 +70,8 @@ namespace Play.Identity.Service
             // The identity resources are defined in the appsettings.Development.json configuration file.
             .AddInMemoryIdentityResources(identityServerSettings.IdentityResources);
 
+            services.AddLocalApiAuthentication();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

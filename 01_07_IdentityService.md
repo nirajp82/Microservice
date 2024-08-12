@@ -312,6 +312,11 @@ These endpoints are integral to managing authentication and authorization proces
 #### What is Duende IdentityServer?
       Duende IdentityServer is an enterprise-grade identity and access management (IAM) solution for .NET applications. It is built on the same foundation as the open-source IdentityServer4, but with additional features, support, and licensing options for commercial use. Duende IdentityServer is designed to offer robust, secure, and scalable solutions for handling authentication and authorization.
 
+
+#### Explain `IdentityServerApi` Scope.
+	This SPECIAL scope. It is used to allow access to APIs that are part of the same application or service that is running IdentityServer itself. It essentially represents a special scope for local APIs that don't require external authorization but need to be protected internally.
+      
+	Internal Authorization: When you configure an API within Duende IdentityServer, you can use this scope to restrict access to that API. It ensures that only clients or services with the appropriate tokens containing this scope can access the API.  
 *******************************
 
 #### Explain what a JSON Web Token (JWT) is and how it works?
