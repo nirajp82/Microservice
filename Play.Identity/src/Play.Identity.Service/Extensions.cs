@@ -16,6 +16,4 @@ public static class Extensions
             user.CreatedOn
         );
     }
-
-    
 }
