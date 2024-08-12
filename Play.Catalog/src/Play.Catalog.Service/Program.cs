@@ -3,6 +3,7 @@ using Play.Common.Settings;
 using Play.Common.MongoDb;
 using Play.Common.RabbitMQ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Play.Common.Identity;
 
 const string ALLOWED_ORIGIN_SETTING = "AllowedOrigin";
 var builder = WebApplication.CreateBuilder(args);
@@ -16,14 +17,8 @@ builder.Services.Configure<ServiceSettings>(serviceSettingsSection);
 builder.Services
     .AddMongo()
     .AddMongoRepo<Item>("items")
-    .AddMassTransitWithRabbitMq();
-
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => {
-        options.Authority = "https://localhost:5003";
-        options.Audience = serviceSettings?.ServiceName;
-    });
+    .AddMassTransitWithRabbitMq()
+    .AddJwtBearerAuthentication();
 
 // Add services to the container.
 builder.Services.AddControllers(

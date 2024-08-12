@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Play.Common;
 using Play.Inventory.Service.Dtos;
@@ -8,6 +9,7 @@ namespace Play.Inventory.Service.Controllers;
 
 [ApiController]
 [Route("items")]
+[Authorize]
 public class ItemsController : ControllerBase
 {
     //The IHttpClientFactory will go ahead and create the typed client ("CatalogClient") as needed. 

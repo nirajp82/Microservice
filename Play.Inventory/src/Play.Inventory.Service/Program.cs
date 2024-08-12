@@ -3,6 +3,7 @@ using Play.Inventory.Service.Entities;
 using Play.Common.MongoDb;
 using Play.Common.Settings;
 using Play.Common.RabbitMQ;
+using Play.Common.Identity;
 
 const string ALLOWED_ORIGIN_SETTING = "AllowedOrigin";
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,8 @@ builder.Services
     .AddMongo()
     .AddMongoRepo<InventoryItem>("inventoryItems")
     .AddMongoRepo<CatalogItem>("catalogItems")
-    .AddMassTransitWithRabbitMq();
+    .AddMassTransitWithRabbitMq()
+    .AddJwtBearerAuthentication();
 
 var randomJitter = new Random();
 
@@ -99,7 +101,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
