@@ -276,7 +276,7 @@ IdentityServer exposes several key endpoints to support standard functionality. 
 1. **Authorize**
    - **Purpose**: Authenticate the end user.
    - **Description**: Used to initiate the authentication process. The user is redirected to this endpoint to log in and grant consent to the client application.
-   - **Request**: GET GET https://localhost:5003/connect/authorize?response_type=code&client_id=postman&scope=openid%20profile%20catalog.fullaccess&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&code_challenge=bK_JI8FLLclnGONSAWCsSyEXlS_FoD7LSCvSU_kAO8k&code_challenge_method=S256
+   - **Request**: GET https://localhost:5003/connect/authorize?response_type=code&client_id=postman&scope=openid%20profile%20catalog.fullaccess&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&code_challenge=bK_JI8FLLclnGONSAWCsSyEXlS_FoD7LSCvSU_kAO8k&code_challenge_method=S256
    
 2. **Token**
    - **Purpose**: Request a token programmatically.
