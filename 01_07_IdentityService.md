@@ -15,7 +15,7 @@
 12. [**Verification of ID Token by the Client**](#verification-of-id-token-by-the-client)
 13. [**Role of the Authorization Server in OIDC**](#role-of-the-authorization-server-in-oidc)
 14. [**Resource Server's Role in OIDC**](#resource-servers-role-in-oidc)
-15, [What is the difference between Bearer and ID Token](#what-is-the-difference-between-bearer-and-id-token)
+15. [What is the difference between Bearer and ID Token](#what-is-the-difference-between-bearer-and-id-token)
 16. *************************
 17. [**Introduction to IdentityServer**](#introduction-to-identityserver)
 18. [**IdentityServer Middleware Endpoints**](#identityserver-middleware-endpoints)
@@ -237,26 +237,26 @@ Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could che
 
 #### What is the difference between Bearer and ID Token
 
-	The generation of bearer tokens directly in the same API that later will use authorize requests based on those tokens. This approach is fine for simple setups, like a single API with a frontend on the same domain. However, in a more complex environment like a microservices architecture, where you have multiple services and clients (sometimes ones you don’t own), using OIDC (OpenID Connect) tokens is preferred. Here’s why:
+The generation of bearer tokens directly in the same API that later will use authorize requests based on those tokens. This approach is fine for simple setups, like a single API with a frontend on the same domain. However, in a more complex environment like a microservices architecture, where you have multiple services and clients (sometimes ones you don’t own), using OIDC (OpenID Connect) tokens is preferred. Here’s why:
 
 
-	1. **Standardization:** OIDC is built on OAuth 2.0 and follows industry standards, making it compatible with many services and tools.
+1. **Standardization:** OIDC is built on OAuth 2.0 and follows industry standards, making it compatible with many services and tools.
 
-	2. **User Authentication**: OIDC ensures that the app knows who the user is, providing identity verification in addition to resource access.
+2. **User Authentication**: OIDC ensures that the app knows who the user is, providing identity verification in addition to resource access.
 
-	3. **Preventing Token Misuse**: The ID Token helps ensure that only the legitimate user can use the token, reducing the risk of token misuse.
+3. **Preventing Token Misuse**: The ID Token helps ensure that only the legitimate user can use the token, reducing the risk of token misuse.
 
-	4. **Enhanced Security:** OIDC offers features like token introspection and revocation, plus public/private key validation, which enhance security and help prevent token forgery.  By adding an identity layer on top of OAuth 2.0, OIDC improves security, ensuring that resources are accessed only by the correct user.
+4. **Enhanced Security:** OIDC offers features like token introspection and revocation, plus public/private key validation, which enhance security and help prevent token forgery.  By adding an identity layer on top of OAuth 2.0, OIDC improves security, ensuring that resources are accessed only by the correct user.
 
-	5. **Single Sign-On (SSO):** OIDC supports SSO, allowing users to log in once and access multiple services without re-authenticating, improving user experience and reducing credential management.
+5. **Single Sign-On (SSO):** OIDC supports SSO, allowing users to log in once and access multiple services without re-authenticating, improving user experience and reducing credential management.
 
-	6. **Separation of Concerns:** OIDC handles authentication through an identity provider (IdP), so your API doesn’t need to manage sensitive credentials, lowering security risks and compliance issues.
+6. **Separation of Concerns:** OIDC handles authentication through an identity provider (IdP), so your API doesn’t need to manage sensitive credentials, lowering security risks and compliance issues.
 
-	7. **Scalability and Flexibility:** OIDC works well in distributed environments and integrates easily with various identity providers, making it scalable and adaptable.
+7. **Scalability and Flexibility:** OIDC works well in distributed environments and integrates easily with various identity providers, making it scalable and adaptable.
 
-	8. **Rich User Information:** OIDC tokens can include detailed user information (claims) for personalization and authorization without extra database queries.
+8. **Rich User Information:** OIDC tokens can include detailed user information (claims) for personalization and authorization without extra database queries.
 
-	For a microservices setup, OIDC tokens are the better choice. For simpler scenarios, basic bearer tokens might suffice.
+For a microservices setup, OIDC tokens are the better choice. For simpler scenarios, basic bearer tokens might suffice.
 
 ### Summary
 
@@ -310,13 +310,13 @@ IdentityServer exposes several key endpoints to support standard functionality. 
 These endpoints are integral to managing authentication and authorization processes effectively in applications using IdentityServer.
 
 #### What is Duende IdentityServer?
-      Duende IdentityServer is an enterprise-grade identity and access management (IAM) solution for .NET applications. It is built on the same foundation as the open-source IdentityServer4, but with additional features, support, and licensing options for commercial use. Duende IdentityServer is designed to offer robust, secure, and scalable solutions for handling authentication and authorization.
+Duende IdentityServer is an enterprise-grade identity and access management (IAM) solution for .NET applications. It is built on the same foundation as the open-source IdentityServer4, but with additional features, support, and licensing options for commercial use. Duende IdentityServer is designed to offer robust, secure, and scalable solutions for handling authentication and authorization.
 
 
 #### Explain `IdentityServerApi` Scope.
-	This SPECIAL scope. It is used to allow access to APIs that are part of the same application or service that is running IdentityServer itself. It essentially represents a special scope for local APIs that don't require external authorization but need to be protected internally.
+This SPECIAL scope. It is used to allow access to APIs that are part of the same application or service that is running IdentityServer itself. It essentially represents a special scope for local APIs that don't require external authorization but need to be protected internally.
       
-	Internal Authorization: When you configure an API within Duende IdentityServer, you can use this scope to restrict access to that API. It ensures that only clients or services with the appropriate tokens containing this scope can access the API.  
+Internal Authorization: When you configure an API within Duende IdentityServer, you can use this scope to restrict access to that API. It ensures that only clients or services with the appropriate tokens containing this scope can access the API.  
 *******************************
 
 #### Explain what a JSON Web Token (JWT) is and how it works?
