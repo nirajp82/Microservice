@@ -10,6 +10,7 @@ using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson;
 using Play.Common.Settings;
 using Play.Identity.Service.Entities;
+using Play.Identity.Service.HostedServices;
 
 namespace Play.Identity.Service
 {
@@ -33,7 +34,8 @@ namespace Play.Identity.Service
             var identityServerSettings = Configuration.GetSection(nameof(IdentityServerSettings)).Get<IdentityServerSettings>();
 
             // Registers the default ASP.NET Core Identity services for managing users and roles in the application.
-            services.AddDefaultIdentity<ApplicationUser>()
+            services.Configure<IdentitySettings>(Configuration.GetSection(nameof(IdentitySettings)))
+                .AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<ApplicationRole>()
                 //Integrates MongoDB as the persistence store for ASP.NET Core Identity user and role data.
                 // Specifies the type "Guid" used for the identifier (ID) of users and roles.
@@ -73,6 +75,8 @@ namespace Play.Identity.Service
             services.AddLocalApiAuthentication();
 
             services.AddControllers();
+            services.AddHostedService<IdentitySeedHostedService>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Play.Identity.Service", Version = "v1" });
