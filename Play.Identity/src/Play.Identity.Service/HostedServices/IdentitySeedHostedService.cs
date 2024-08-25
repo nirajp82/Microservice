@@ -77,8 +77,14 @@ public class IdentitySeedHostedService : IHostedService
                 Email = _settings.AdminUserEmail,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
-            await userManager.CreateAsync(adminUser, _settings.AdminUserPassword);
-            await userManager.AddToRoleAsync(adminUser, Roles.Admin);
+            var createUserResult = await userManager.CreateAsync(adminUser, _settings.AdminUserPassword);
+            if (createUserResult.Succeeded)
+            {
+                var createRoleResult = await userManager.AddToRoleAsync(adminUser, Roles.Admin);
+                if (createRoleResult.Succeeded) 
+                {
+                }
+            }
         }
     }
 }

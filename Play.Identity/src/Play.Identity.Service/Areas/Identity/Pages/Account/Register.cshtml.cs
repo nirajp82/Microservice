@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using MassTransit.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -17,18 +18,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Play.Identity.Service.Entities;
 
 namespace Play.Identity.Service.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private const decimal _STARTING_GIL = 100;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IdentitySettings _identitySettings;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
@@ -36,6 +38,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
+            IOptions<IdentitySettings> identitySettings,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -43,6 +46,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
+            _identitySettings = identitySettings.Value;
             _emailSender = emailSender;
         }
 
@@ -114,7 +118,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-                user.Gil = _STARTING_GIL;
+                user.Gil = _identitySettings.StartingGil;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -122,6 +126,9 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    await _userManager.AddToRoleAsync(user, Roles.Player);
+                    _logger.LogInformation($"User {user.Email} added to to the role {Roles.Player}.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

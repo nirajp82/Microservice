@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Play.Common;
@@ -9,9 +11,10 @@ namespace Play.Inventory.Service.Controllers;
 
 [ApiController]
 [Route("items")]
-[Authorize]
 public class ItemsController : ControllerBase
 {
+    private const string AdminRole = "Admin";
+
     //The IHttpClientFactory will go ahead and create the typed client ("CatalogClient") as needed. 
     //public readonly CatalogClient _catalogClient;
     public readonly IRepository<CatalogItem> _catalogItemRepo;
@@ -26,11 +29,21 @@ public class ItemsController : ControllerBase
     [HttpGet]
     [ProducesResponseType<IEnumerable<InventoryItemDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Authorize]
     public async Task<IResult> GetAsync(Guid userId)
     {
         if (userId == Guid.Empty)
         {
             return Results.BadRequest();
+        }
+
+        var currentUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)!;
+        if (Guid.Parse(currentUserId) != userId) 
+        {
+            if(!User.IsInRole(AdminRole)) 
+            {
+                return Results.Forbid();
+            }
         }
 
         var inventoryItems = await _inventoryItemRepo.GetAllAsync(item => item.UserId == userId);
@@ -48,6 +61,7 @@ public class ItemsController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [Authorize(Roles = AdminRole)]
     public async Task<IResult> PostAsync(GrantItemsDto grantItemsDto)
     {
         Expression<Func<InventoryItem, bool>> filter = item => item.UserId == grantItemsDto.UserId &&

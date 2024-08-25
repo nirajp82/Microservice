@@ -6,14 +6,16 @@ using Play.Catalog.Service.Entities;
 using Play.Catalog.Contracts;
 using Play.Common;
 using Microsoft.AspNetCore.Authorization;
+using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace Play.Catalog.Service.Controllers;
 
 [ApiController]
 [Route("items")]
-[Authorize]
 public class ItemsController : ControllerBase
 {
+    private const string AdminRole = "Admin";
+
     private readonly IRepository<Item> _itemsRepository;
     private readonly IPublishEndpoint _publishEndpoint;
     static int _requestCnt = 0;
@@ -26,6 +28,7 @@ public class ItemsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<ItemDto>>(StatusCodes.Status200OK)]
+    [Authorize(Policies.Read)]
     public async Task<IResult> GetAsync()
     {
         bool isPollyTest = false;
@@ -41,6 +44,7 @@ public class ItemsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType<ItemDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Policies.Read)]
     public async Task<IResult> GetByIdAsync(Guid id)
     {
         var item = await _itemsRepository.GetAsync(id);
@@ -53,6 +57,7 @@ public class ItemsController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType<ItemDto>(StatusCodes.Status201Created)]
+    [Authorize(Policies.Write)]
     public async Task<IActionResult> PostAsync(CreateItemDto createItemDto)
     {
         var item = new Item
@@ -72,6 +77,7 @@ public class ItemsController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Policies.Write)]
     public async Task<IResult> PutAsync(Guid id, UpdateItemDto updateItemDto)
     {
         var existingItem = await _itemsRepository.GetAsync(id);
@@ -94,6 +100,7 @@ public class ItemsController : ControllerBase
     // DELETE /items/{id}
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Policies.Write)]
     public async Task<IResult> Delete(Guid id)
     {
         var existingItem = await _itemsRepository.GetAsync(id);

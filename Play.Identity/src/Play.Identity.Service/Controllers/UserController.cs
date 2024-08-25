@@ -15,7 +15,7 @@ namespace Play.Identity.Service.Controller;
 [Route("users")]
 //Enforce a specific authorization policy in ASP.NET Core applications that are integrated with Duende IdentityServer.
 //It protects resources by requiring that the incoming requests have valid tokens containing the LocalApi scope.
-[Authorize(Policy = IdentityServerConstants.LocalApi.PolicyName)]
+[Authorize(Policy = IdentityServerConstants.LocalApi.PolicyName, Roles = Roles.Admin)]
 public class UsersController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
