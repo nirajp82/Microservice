@@ -16,6 +16,8 @@ namespace Play.Identity.Service
 {
     public class Startup
     {
+        private const string ALLOWED_ORIGIN_SETTINGS = "AllowedOrigin";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -91,6 +93,12 @@ namespace Play.Identity.Service
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Play.Identity.Service v1"));
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins(Configuration[ALLOWED_ORIGIN_SETTINGS])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             }
 
             app.UseHttpsRedirection();

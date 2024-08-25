@@ -2,22 +2,21 @@ import React from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 import authService from '../api-authorization/AuthorizeService'
 
-export default class GrantItemForm extends React.Component
+export default class UserForm extends React.Component
 {
     state = {
-        id: '',
-        userId: '',
-        quantity: 1,
+        id: 0,
+        email: '',
+        gil: '',
         alertVisible: false,
         validated: false
     }
-
     componentDidMount()
     {
-        if (this.props.item)
+        if (this.props.user)
         {
-            const { id } = this.props.item
-            this.setState({ id });
+            const { id, email, gil } = this.props.user
+            this.setState({ id, email, gil });
         }
     }
     onChange = e =>
@@ -25,7 +24,7 @@ export default class GrantItemForm extends React.Component
         this.setState({ [e.target.name]: e.target.value })
     }
 
-    submitGrant = (e) =>
+    submitEdit = (e) =>
     {
         e.preventDefault();
 
@@ -36,25 +35,25 @@ export default class GrantItemForm extends React.Component
         }
         else
         {
-            this.grantItem();
+            this.updateUser();
         }
 
         this.setState({ validated: true });
     }
 
-    async grantItem()
+    async updateUser()
     {
         const token = await authService.getAccessToken();
-        fetch(`${window.INVENTORY_ITEMS_API_URL}`, {
-            method: 'post',
+        fetch(`${window.USERS_API_URL}/${this.state.id}`, {
+            method: 'put',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                userId: this.state.userId,
-                catalogItemId: this.state.id,
-                quantity: parseInt(this.state.quantity)
+                id: this.state.id,
+                email: this.state.email,
+                gil: parseFloat(this.state.gil)
             })
         })
             .then(async response =>
@@ -63,10 +62,11 @@ export default class GrantItemForm extends React.Component
                 {
                     const errorData = await response.json();
                     console.error(errorData);
-                    throw new Error(`Could not grant the item: ${errorData.title}`);
+                    throw new Error(`Could not update the user: ${errorData.title}`);
                 }
 
                 this.props.toggle();
+                this.props.updateUserIntoState(this.state.id);
             })
             .catch(err => 
             {
@@ -85,18 +85,18 @@ export default class GrantItemForm extends React.Component
 
     render()
     {
-        return <Form noValidate validated={this.state.validated} onSubmit={this.submitGrant}>
+        return <Form noValidate validated={this.state.validated} onSubmit={this.submitEdit}>
             <Form.Group>
-                <Form.Label htmlFor="userId">User Id:</Form.Label>
-                <Form.Control type="text" name="userId" onChange={this.onChange} value={this.state.userId} required />
-                <Form.Control.Feedback type="invalid">The User Id field is required</Form.Control.Feedback>
+                <Form.Label htmlFor="email">Name:</Form.Label>
+                <Form.Control type="email" name="email" label="Email:" onChange={this.onChange} value={this.state.email} required />
+                <Form.Control.Feedback type="invalid">The Email field is required</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-                <Form.Label htmlFor="quantity">Quantity:</Form.Label>
-                <Form.Control type="number" name="quantity" onChange={this.onChange} value={this.state.quantity} required />
-                <Form.Control.Feedback type="invalid">The Quantity field is required</Form.Control.Feedback>
+                <Form.Label htmlFor="gil">Gil:</Form.Label>
+                <Form.Control type="number" name="gil" onChange={this.onChange} value={this.state.gil} required />
+                <Form.Control.Feedback type="invalid">The Gil field is required</Form.Control.Feedback>
             </Form.Group>
-            <Button variant="primary" type="submit">Grant</Button>
+            <Button variant="primary" type="submit">Save</Button>
 
             <Alert style={{ marginTop: "10px" }} variant={this.state.alertColor} show={this.state.alertVisible}>
                 {this.state.alertMessage}
