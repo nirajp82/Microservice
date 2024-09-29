@@ -2,7 +2,6 @@ using Play.Catalog.Service.Entities;
 using Play.Common.Settings;
 using Play.Common.MongoDb;
 using Play.Common.RabbitMQ;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Play.Common.Identity;
 using Play.Catalog.Service;
 

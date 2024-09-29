@@ -1,16 +1,10 @@
-﻿using Automatonymous;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Play.Identity.Service.Entities;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Duende.IdentityServer.Telemetry.Metrics;
-using static MassTransit.MessageHeaders;
-using static System.Net.Mime.MediaTypeNames;
-using System.Timers;
 using System;
 
 namespace Play.Identity.Service.HostedServices;

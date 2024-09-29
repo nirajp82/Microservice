@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using Duende.IdentityServer.Models;
-
-namespace Play.Identity.Service;
+﻿namespace Play.Identity.Service;
 
 public class IdentitySettings
 {

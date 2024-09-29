@@ -6,7 +6,6 @@ using Play.Catalog.Service.Entities;
 using Play.Catalog.Contracts;
 using Play.Common;
 using Microsoft.AspNetCore.Authorization;
-using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace Play.Catalog.Service.Controllers;
 
