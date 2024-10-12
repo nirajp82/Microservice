@@ -237,9 +237,30 @@ If the Authorization Server verifies the request and the code verifier, it respo
 - **upload_photos**
 
 #### 9. **Resource Access**
-Now equipped with the access token, PhotoShareApp can interact with SocialSnap’s Resource Server. When making requests, it includes the access token. The Resource Server checks the token’s scopes to determine what actions PhotoShareApp is allowed to perform:
-- **Fetching Photos**: With the **read_photos** scope, PhotoShareApp retrieves your photos from SocialSnap.
-- **Uploading New Photos**: If you choose to add photos through PhotoShareApp, it uses the **upload_photos** scope to add them to your SocialSnap account.
+Now equipped with the access token, PhotoShareApp can interact with SocialSnap’s Resource Server. When making requests, it includes the access token in the request header.
+
+Here’s how the Resource Server validates the access token to ensure it’s legitimate:
+
+9.1. **Token Verification**: The Resource Server checks the access token against the Authorization Server. This process involves:
+   - **Signature Verification**:
+     - The access token is signed by the Authorization Server using its **private key**, which is kept confidential and never shared.
+     - When the token is created, the Authorization Server generates a unique signature by applying a cryptographic algorithm to the token’s content (such as the payload and metadata) along with the private key.
+     - The Resource Server uses the corresponding **public key** to verify this signature. The public key can be freely distributed and is available to anyone who needs to verify tokens.
+     - **How it Works**:
+       - The Resource Server extracts the signature from the received access token.
+       - It uses the public key to validate the signature by performing a cryptographic operation (e.g., using algorithms like RSA or ECDSA).
+       - If the signature is valid, it confirms that the token was issued by the trusted Authorization Server and has not been altered.
+
+9.2. **Token Introspection**: In addition to signature verification, the Resource Server may call the Authorization Server’s token introspection endpoint to check:
+   - The token's validity (e.g., not revoked or expired).
+   - Expiration time.
+   - Associated scopes, ensuring the token has the necessary permissions for the requested action.
+
+9.3. **Scope Check**: After validating the token, the Resource Server examines its scopes to determine what actions PhotoShareApp is allowed to perform:
+   - **Fetching Photos**: With the **read_photos** scope, PhotoShareApp can retrieve your photos from SocialSnap.
+   - **Uploading New Photos**: If you choose to add photos through PhotoShareApp, it uses the **upload_photos** scope to add them to your SocialSnap account.
+
+This comprehensive process ensures that only valid access tokens are accepted, preventing unauthorized access and maintaining security throughout the interaction. The use of public/private key pairs facilitates a secure method of verifying the authenticity of the access token, ensuring that only the legitimate Authorization Server can issue valid tokens, while allowing anyone with the public key to verify their integrity.
 
 #### 10. **User Experience**
 As a result, you can easily create and organize photo albums in PhotoShareApp using your existing SocialSnap photos. The process is seamless, ensuring you maintain control over your data.
