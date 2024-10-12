@@ -270,13 +270,6 @@ As a result, you can easily create and organize photo albums in PhotoShareApp us
 #### 11. **Scope Management and Revocation**
 If you later decide to limit PhotoShareApp's access, you can revoke the permissions through your SocialSnap account settings. This action will prevent PhotoShareApp from accessing your photos or uploading new ones.
 
-### Diagram
-![image](https://github.com/user-attachments/assets/bed8b70f-e013-41b6-81e9-b8469051a684)
-Reference: https://xebia.com/blog/get-rid-of-client-secrets-with-oauth-authorization-code-pkce-flow/ 
-
-This diagram and explanation illustrate the OAuth 2.0 Authorization Code Flow with PKCE, detailing how **PhotoShareApp** securely obtains access to your photos on **SocialSnap** without exposing sensitive information.
-
-
 # OIDC
 ### What is OpenID Connect (OIDC)?
 
@@ -297,21 +290,84 @@ Now, if JohnDoe shares this Access Token with JaneSmith, JaneSmith can use it to
 
 OIDC solves this issue by introducing an **ID Token** along with the Access Token. The ID Token contains information about the authenticated user, such as their unique identifier (user ID), and how they were authenticated.
 
-### The OIDC Flow
+### The OpenID Connect (OIDC) Flow with PKCE for PhotoShareApp
 
-The OIDC flow is very similar to the OAuth 2.0 flow, with an additional step for user authentication. Here’s how it works:
+The OpenID Connect (OIDC) flow builds on OAuth 2.0 to provide both authentication and authorization. Here’s how it works, with an added emphasis on security through PKCE:
 
-1. **Authorization Request**: PhotoShareApp redirects JohnDoe to SocialSnap’s Authorization Server, requesting permission to access JohnDoe’s photos. PhotoShareApp also requests the `openid` scope, which indicates that it wants to authenticate the user and receive an ID Token.
+1. **User Initiates Login**  
+   You want to use PhotoShareApp to access your photos on SocialSnap. You begin by clicking the **"Login with SocialSnap"** button on the PhotoShareApp website.
 
-2. **User Authentication**: SocialSnap’s Authorization Server authenticates JohnDoe (e.g., via username and password).
+2. **PKCE Setup**  
+   To enhance security, PhotoShareApp implements Proof Key for Code Exchange (PKCE). Before sending the authorization request, PhotoShareApp generates:
+   - **A code verifier**: A random string used later in the token exchange.
+   - **A code challenge**: A hashed version of the code verifier that is sent to the Authorization Server.
 
-3. **Authorization Response**: If authentication is successful, SocialSnap’s Authorization Server sends back an Authorization Code to PhotoShareApp.
+3. **Authorization Request**  
+   When you click the login button:
+   - PhotoShareApp sends an authorization request to SocialSnap’s Authorization Server, which includes:
+     - The client ID: Identifying PhotoShareApp.
+     - The redirect URI: Where the user will be sent after authorization.
+     - The code challenge: The hashed version of the code verifier.
+     - The required scopes:
+       - `openid`: Indicates that authentication is requested.
+       - `profile`: Requests access to the user's profile information.
+       - `email`: Requests access to the user's email address.
 
-4. **Token Exchange**: PhotoShareApp exchanges the Authorization Code for an Access Token and an ID Token by making a request to SocialSnap’s Token Endpoint.
+4. **Redirection to Login Page**  
+   After sending the authorization request, you are redirected to the SocialSnap Authorization Server, which presents you with the login page. Here, you need to enter your **username** and **password** to authenticate yourself.
 
-5. **ID Token and Access Token Received**: SocialSnap’s Token Endpoint returns both an Access Token (for accessing resources like photos) and an ID Token (which contains information about JohnDoe’s identity).
+5. **User Consent**  
+   Once you successfully log in, the Authorization Server shows you a consent screen. It details the permissions that PhotoShareApp is requesting:
+   - "PhotoShareApp wants to access your photos (read only)."
+   - "PhotoShareApp also wants to upload new photos to your account."
+   - "PhotoShareApp wants to access your profile information."
+   - "PhotoShareApp wants to access your email address."
+   You review these permissions, and if you agree, you click the **"Allow"** button.
 
-6. **Access Resources and Verify Identity**: PhotoShareApp can now use the Access Token to retrieve JohnDoe’s photos from SocialSnap. Additionally, PhotoShareApp can verify JohnDoe’s identity using the ID Token to ensure that the token is being used by the correct person.
+6. **Authorization Grant**  
+   After granting permission, the Authorization Server provides PhotoShareApp with an **Authorization Code**. This code is temporary and allows PhotoShareApp to request an access token and an ID token.
+
+7. **Access Token Request**  
+   PhotoShareApp now exchanges the Authorization Code for an access token and an ID token. This request is sent to the Authorization Server and includes:
+   - The Authorization Code received in the previous step.
+   - The client ID.
+   - The redirect URI to ensure it matches what was registered.
+   - The original **code verifier** used to generate the code challenge.
+
+8. **Access Token and ID Token Response**  
+   If the Authorization Server verifies the request and the code verifier, it responds by issuing both an **Access Token** and an **ID Token** to PhotoShareApp. 
+   - The Access Token includes the granted scopes, allowing PhotoShareApp to perform specific actions.
+   - The ID Token contains information about your identity, such as your user ID, email, and any other profile details requested.
+
+9. **Resource Access**  
+   Now equipped with the access token, PhotoShareApp can interact with SocialSnap’s Resource Server. When making requests, it includes the access token in the request header. 
+
+   Here’s how the Resource Server validates the access token to ensure it’s legitimate:
+   - **Token Verification**:
+     - The access token is signed by the Authorization Server using its private key, which is kept confidential.
+     - The Resource Server uses the corresponding public key to verify this signature.
+     - If the signature is valid, it confirms that the token was issued by the trusted Authorization Server and has not been altered.
+
+   - **Token Introspection**: In addition to signature verification, the Resource Server may call the Authorization Server’s token introspection endpoint to check:
+     - The token's validity (e.g., not revoked or expired).
+     - Expiration time.
+     - Associated scopes, ensuring the token has the necessary permissions for the requested action.
+
+   - **Scope Check**: After validating the token, the Resource Server examines its scopes to determine what actions PhotoShareApp is allowed to perform:
+     - **Fetching Photos**: With the `read_photos` scope, PhotoShareApp can retrieve your photos from SocialSnap.
+     - **Uploading New Photos**: If you choose to add photos through PhotoShareApp, it uses the `upload_photos` scope to add them to your SocialSnap account.
+
+10. **User Experience**  
+   As a result, you can easily create and organize photo albums in PhotoShareApp using your existing SocialSnap photos. The process is seamless, ensuring you maintain control over your data.
+
+11. **Scope Management and Revocation**  
+   If you later decide to limit PhotoShareApp's access, you can revoke the permissions through your SocialSnap account settings. This action will prevent PhotoShareApp from accessing your photos or uploading new ones.
+
+This comprehensive OIDC flow ensures that PhotoShareApp can securely access your data while providing authentication and authorization, enhancing security through the use of PKCE and robust token verification processes.
+
+### Diagram
+![image](https://github.com/user-attachments/assets/bed8b70f-e013-41b6-81e9-b8469051a684)
+Reference: https://xebia.com/blog/get-rid-of-client-secrets-with-oauth-authorization-code-pkce-flow/ 
 
 #### Continuing the Example with OIDC
 
