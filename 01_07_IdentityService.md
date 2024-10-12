@@ -130,10 +130,17 @@ With the authorization grant in hand, PhotoShareApp makes a request to the Autho
 - The **redirect URI** to ensure it matches what was registered.
 
 #### 7. **Access Token Response**
-If the Authorization Server verifies everything, it responds by issuing an **access token** to PhotoShareApp. This token includes the granted scopes:
+If the Authorization Server verifies the request and the **code verifier**, it issues an access token to PhotoShareApp. 
+
+Here's how the verification process works:
+- The Authorization Server hashes the **code verifier** received from PhotoShareApp to generate a **code challenge**.
+- It compares this generated code challenge with the original code challenge sent during the authorization request.
+- If they match, the request is confirmed as legitimate, since only PhotoShareApp knows the original code verifier.
+
+Upon successful verification, the Authorization Server responds with an access token that includes the granted scopes:
 - **read_photos**
 - **upload_photos**
-
+  
 #### 8. **Resource Access**
 Now equipped with the access token, PhotoShareApp can interact with SocialSnap’s Resource Server. When making requests, it includes the access token. The Resource Server checks the token’s scopes to determine what actions PhotoShareApp is allowed to perform:
 - **Fetching Photos**: With the **read_photos** scope, PhotoShareApp retrieves your photos from SocialSnap.
