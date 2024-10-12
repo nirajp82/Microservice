@@ -177,27 +177,61 @@ In summary, OAuth2 scopes allow precise control over what a third-party applicat
 
 ### Authorization Flow Steps
 
-1. **Generate Code Verifier and Code Challenge**:
-   - **PhotoShareApp** generates a **Code Verifier** (a random string).
-   - The **Code Verifier** is hashed to create a **Code Challenge** (usually using SHA-256).
+### OAuth 2.0 Authorization Code Flow with PKCE for PhotoShareApp
 
-2. **Authorization Request**:
-   - **PhotoShareApp** sends an authorization request to SocialSnap’s **Authorization Server**, including the **Code Challenge** and the `code_challenge_method` (e.g., `S256` for SHA-256). The request also includes the scope (e.g., `read_photos` and `upload_photos`), redirect URI, and other required parameters.
+#### 1. **User Initiates Login**
+You want to use **PhotoShareApp** to access your photos on **SocialSnap**. You begin by clicking the **"Login with SocialSnap"** button on the PhotoShareApp website.
 
-3. **User Consent**:
-   - The **Authorization Server** presents a consent screen to you, the Resource Owner, detailing the permissions **PhotoShareApp** is requesting. You decide whether to approve or deny these permissions.
+#### 2. **PKCE Setup**
+To enhance security, PhotoShareApp implements **Proof Key for Code Exchange (PKCE)**. Before sending the authorization request, PhotoShareApp generates:
+- A **code verifier**: A random string used later in the token exchange.
+- A **code challenge**: A hashed version of the code verifier that is sent to the Authorization Server.
 
-4. **Authorization Grant**:
-   - If you grant permission, SocialSnap’s **Authorization Server** sends an **Authorization Code** to **PhotoShareApp** via the redirect URI. This **Authorization Code** is valid for very short duration of the time like 10 minute or so and good for only one use.
+#### 3. **Authorization Request**
+When you click the login button:
+- PhotoShareApp sends an authorization request to SocialSnap’s Authorization Server, which includes:
+  - The **client ID**: Identifying PhotoShareApp.
+  - The **redirect URI**: Where the user will be sent after authorization.
+  - The **code challenge**: The hashed version of the code verifier.
+  - The required scopes:
+    - **read_photos**: Allows PhotoShareApp to view and retrieve your photos.
+    - **upload_photos**: Allows PhotoShareApp to add new photos to your SocialSnap account.
 
-5. **Access Token Request**:
-   - **PhotoShareApp** exchanges the **Authorization Code** for an **Access Token** by sending a request to the **Authorization Server**. This request includes the original **Code Verifier** along with **Authorization Code**.
+#### 4. **Redirection to Login Page**
+After sending the authorization request, you are redirected to the **SocialSnap Authorization Server**, which presents you with the login page. Here, you need to enter your **username** and **password** to authenticate yourself.
 
-6. **Access Token Response**:
-   - The **Authorization Server** validates the **Code Verifier** against the **Code Challenge** used in the initial authorization request. If they match, the **Authorization Server** issues an **Access Token** and sends it back to **PhotoShareApp**.
+#### 5. **User Consent**
+Once you successfully log in, the Authorization Server shows you a consent screen. It details the permissions that PhotoShareApp is requesting:
+- **"PhotoShareApp wants to access your photos (read only)."**
+- **"PhotoShareApp also wants to upload new photos to your account."**
 
-7. **Resource Access**:
-   - **PhotoShareApp** uses the **Access Token** to make requests to SocialSnap’s **Resource Server**. The **Resource Server** checks the token’s validity and grants or denies access to your photos based on the token's permissions.
+You review these permissions, and if you agree, you click the **"Allow"** button.
+
+#### 6. **Authorization Grant**
+After granting permission, the Authorization Server provides PhotoShareApp with an **authorization code**. This code is temporary and allows PhotoShareApp to request an access token.
+
+#### 7. **Access Token Request**
+PhotoShareApp now exchanges the authorization code for an **access token**. This request is sent to the Authorization Server and includes:
+- The **authorization code** received in the previous step.
+- The **client ID**.
+- The **redirect URI** to ensure it matches what was registered.
+- The **code verifier**: This is the original string generated during the PKCE setup, used to verify the request.
+
+#### 8. **Access Token Response**
+If the Authorization Server verifies the request and the code verifier, it responds by issuing an **access token** to PhotoShareApp. This token includes the granted scopes:
+- **read_photos**
+- **upload_photos**
+
+#### 9. **Resource Access**
+Now equipped with the access token, PhotoShareApp can interact with SocialSnap’s Resource Server. When making requests, it includes the access token. The Resource Server checks the token’s scopes to determine what actions PhotoShareApp is allowed to perform:
+- **Fetching Photos**: With the **read_photos** scope, PhotoShareApp retrieves your photos from SocialSnap.
+- **Uploading New Photos**: If you choose to add photos through PhotoShareApp, it uses the **upload_photos** scope to add them to your SocialSnap account.
+
+#### 10. **User Experience**
+As a result, you can easily create and organize photo albums in PhotoShareApp using your existing SocialSnap photos. The process is seamless, ensuring you maintain control over your data.
+
+#### 11. **Scope Management and Revocation**
+If you later decide to limit PhotoShareApp's access, you can revoke the permissions through your SocialSnap account settings. This action will prevent PhotoShareApp from accessing your photos or uploading new ones.
 
 ### Diagram
 ![image](https://github.com/user-attachments/assets/bed8b70f-e013-41b6-81e9-b8469051a684)
