@@ -246,9 +246,9 @@ Here’s how the Resource Server validates the access token to ensure it’s leg
      - The access token is signed by the Authorization Server using its **private key**, which is kept confidential and never shared.
      - When the token is created, the Authorization Server generates a unique signature by applying a cryptographic algorithm to the token’s content (such as the payload and metadata) along with the private key.
      - This signature ensures that the token can be verified later and guarantees its integrity.
-     - **Signature Verification by Resource Server**:
+   - **Signature Verification by Resource Server**:
      - The Resource Server uses the corresponding **public key** to verify this signature. The public key can be freely distributed and is available to anyone who needs to verify tokens.
-     - **How it Works**:
+   - **How it Works**:
        - The Resource Server extracts the signature from the received access token.
        - It uses the public key to validate the signature by performing a cryptographic operation (e.g., using algorithms like RSA or ECDSA).
        - If the signature is valid, it confirms that the token was issued by the trusted Authorization Server and has not been altered.
