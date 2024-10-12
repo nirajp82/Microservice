@@ -130,8 +130,6 @@ You use a social media platform called **SocialSnap** where you upload and share
 
 In summary, OAuth2 scopes allow precise control over what a third-party application can do, ensuring secure and transparent access to resources.
 
-Certainly! Here’s a complete explanation of the OAuth 2.0 Authorization Code Flow with PKCE for **PhotoShareApp**, including a revised diagram for easy copying.
-
 ---
 
 ## OAuth 2.0 Authorization Code Flow with PKCE for **PhotoShareApp**
