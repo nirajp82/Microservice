@@ -182,7 +182,8 @@ This diagram and explanation illustrate the OAuth 2.0 Authorization Code Flow wi
 # OIDC
 ### What is OpenID Connect (OIDC)?
 
-OpenID Connect (OIDC) is an identity layer built on top of the OAuth 2.0 protocol. It provides a way for applications to verify a user’s identity while still allowing them to gain access to the user’s resources. OIDC extends OAuth 2.0 by adding an additional token called the **ID Token**, which contains information about the user’s identity.
+OIDC stands for OpenID Connect. It is an authentication/identity layer built on top of the OAuth 2.0 protocol. OIDC allows clients (like web applications or mobile apps) to verify the identity of users based on the authentication performed by an authorization server. It provides a standardized way to obtain user identity information, allowing for single sign-on (SSO) and simplifying the authentication process across different services. OIDC extends OAuth 2.0 by adding an additional token called the **ID Token**, which contains information about the user’s identity.
+
 
 ### The Problem OIDC Solves Over OAuth 2.0
 
