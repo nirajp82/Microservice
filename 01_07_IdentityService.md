@@ -99,22 +99,51 @@ In OAuth2, a "scope" is a parameter used to define the level of access that a cl
 You use a social media platform called **SocialSnap** where you upload and share photos. You come across **PhotoShareApp**, which helps you create photo albums by importing pictures from your SocialSnap account.
 
 ### OAuth2 Flow with Scopes
+### OAuth2 Flow with Scopes: Detailed Steps Including User Credentials
 
-1. **Authorization Request**: **PhotoShareApp** wants to access your photos on SocialSnap. It sends an authorization request to SocialSnap’s **Authorization Server**, specifying the scopes it needs:
-   - `read_photos`: Allows PhotoShareApp to view and retrieve your photos.
-   - `upload_photos`: Allows PhotoShareApp to add new photos to your account.
+#### 1. **User Initiates Login**
+You want to use **PhotoShareApp** to access your photos on **SocialSnap**. You start by clicking the **"Login with SocialSnap"** button on the PhotoShareApp website.
 
-2. **User Consent**: The **Authorization Server** presents you with a consent screen showing what permissions **PhotoShareApp** is requesting:
-   - "PhotoShareApp wants to access your photos (read only)."
-   - "PhotoShareApp also wants to upload new photos to your account."
+#### 2. **Authorization Request**
+This action triggers PhotoShareApp to send an authorization request to SocialSnap’s Authorization Server:
+- The request specifies the required scopes:
+  - **read_photos**: Allows PhotoShareApp to view and retrieve your photos.
+  - **upload_photos**: Allows PhotoShareApp to add new photos to your SocialSnap account.
 
-3. **Authorization Grant**: If you approve the request, the **Authorization Server** provides **PhotoShareApp** with an authorization grant.
+#### 3. **User Credentials Entry**
+After sending the authorization request, you are redirected to the SocialSnap login page. Here, you need to enter your **username** and **password** to authenticate yourself.
 
-4. **Access Token Request**: **PhotoShareApp** exchanges this authorization grant for an access token by making a request to the **Authorization Server**.
+#### 4. **User Consent**
+Once you successfully log in, the Authorization Server presents you with a consent screen. It details the permissions that PhotoShareApp is requesting:
+- **"PhotoShareApp wants to access your photos (read only)."**
+- **"PhotoShareApp also wants to upload new photos to your account."**
 
-5. **Access Token Response**: The **Authorization Server** issues an access token to **PhotoShareApp** that includes the granted scopes, such as `read_photos` and `upload_photos`.
+You review these permissions, and if you agree, you click the **"Allow"** button.
 
-6. **Resource Access**: **PhotoShareApp** uses the access token to interact with SocialSnap’s **Resource Server**. The **Resource Server** checks the token’s scopes to determine what actions **PhotoShareApp** is allowed to perform.
+#### 5. **Authorization Grant**
+After granting permission, the Authorization Server provides PhotoShareApp with an **authorization grant**. This grant is a temporary code that allows PhotoShareApp to request an access token.
+
+#### 6. **Access Token Request**
+With the authorization grant in hand, PhotoShareApp makes a request to the Authorization Server to exchange it for an **access token**. This request includes:
+- The **authorization grant** received in the previous step.
+- The **client ID** and **client secret** to verify PhotoShareApp’s identity.
+- The **redirect URI** to ensure it matches what was registered.
+
+#### 7. **Access Token Response**
+If the Authorization Server verifies everything, it responds by issuing an **access token** to PhotoShareApp. This token includes the granted scopes:
+- **read_photos**
+- **upload_photos**
+
+#### 8. **Resource Access**
+Now equipped with the access token, PhotoShareApp can interact with SocialSnap’s Resource Server. When making requests, it includes the access token. The Resource Server checks the token’s scopes to determine what actions PhotoShareApp is allowed to perform:
+- **Fetching Photos**: With the **read_photos** scope, PhotoShareApp retrieves your photos from SocialSnap.
+- **Uploading New Photos**: If you choose to add photos through PhotoShareApp, it uses the **upload_photos** scope to add them to your SocialSnap account.
+
+#### 9. **User Experience**
+As a result, you can easily create and organize photo albums in PhotoShareApp using your existing SocialSnap photos. The process is seamless, ensuring you maintain control over your data.
+
+#### 10. **Scope Management and Revocation**
+If you later decide to limit PhotoShareApp's access, you can revoke the permissions through your SocialSnap account settings. This action will prevent PhotoShareApp from accessing your photos or uploading new ones.
 
 ### Example Scenarios
 
