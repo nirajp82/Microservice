@@ -110,8 +110,8 @@ This action triggers PhotoShareApp to send an authorization request to SocialSna
   - **read_photos**: Allows PhotoShareApp to view and retrieve your photos.
   - **upload_photos**: Allows PhotoShareApp to add new photos to your SocialSnap account.
 
-#### 3. **User Credentials Entry**
-After sending the authorization request, you are redirected to the SocialSnap login page. Here, you need to enter your **username** and **password** to authenticate yourself.
+#### 3. **Redirection to Login Page**
+After sending the authorization request, you are redirected to the SocialSnap Authorization Server, which presents you with the login page. Here, you need to enter your username and password to authenticate yourself.
 
 #### 4. **User Consent**
 Once you successfully log in, the Authorization Server presents you with a consent screen. It details the permissions that PhotoShareApp is requesting:
