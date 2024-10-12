@@ -217,11 +217,12 @@ You review these permissions, and if you agree, you click the **"Allow"** button
 After granting permission, the Authorization Server provides PhotoShareApp with an **authorization code**. This code is temporary and allows PhotoShareApp to request an access token.
 
 #### 7. **Access Token Request**
-PhotoShareApp now exchanges the authorization code for an **access token**. This request is sent to the Authorization Server and includes:
+PhotoShareApp now exchanges the authorization code for an access token. This request is sent to the Authorization Server and includes:
+
 - The **authorization code** received in the previous step.
 - The **client ID**.
 - The **redirect URI** to ensure it matches what was registered.
-- The **code verifier**: This is the original string generated during the PKCE setup, used to verify the request.
+- The **code verifier**: This is the original string generated during the PKCE setup. It is sent to confirm that the request is legitimate; only PhotoShareApp knows this code. If an attacker intercepted the authorization code, they couldn't use it to get an access token without the code verifier, adding a layer of security.t.
 
 #### 8. **Access Token Response**
 If the Authorization Server verifies the request and the code verifier, it responds by issuing an **access token** to PhotoShareApp. This token includes the granted scopes:
