@@ -6,8 +6,6 @@
 6. [Practical Considerations](#practical-considerations)
 7. [Conclusion](#conclusion)
 
-Certainly! Let’s delve deeper into distributed transactions in microservices, covering their importance, challenges, various approaches, and practical considerations.
-
 ### Distributed Transactions in Microservices
 
 #### What Are Distributed Transactions?
