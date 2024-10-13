@@ -395,7 +395,7 @@ The OpenID Connect (OIDC) flow builds on OAuth 2.0 to provide both authenticatio
                 return null; // Return null to indicate an error
             }
         }
-    ```
+```
     
    - **Token Introspection**: In addition to signature verification, the Resource Server may call the Authorization Server’s token introspection endpoint to check:
      - The token's validity (e.g., not revoked or expired).
