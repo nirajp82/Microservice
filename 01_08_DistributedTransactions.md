@@ -22,7 +22,7 @@ In a microservices architecture, applications are built as a collection of loose
 
 1. **ACID Properties**:
    - **Atomicity**: Ensures that all parts of the transaction either complete or none do.
-   - **Consistency**: Guarantees that the database transitions from one valid state to another.
+   - **Consistency**: Ensures that the database moves from one valid state to another, maintaining all rules and constraints.
    - **Isolation**: Ensures that the execution of a transaction is isolated from others, preventing interference.
    - **Durability**: Once a transaction is committed, it remains committed even in the case of failures.
 
