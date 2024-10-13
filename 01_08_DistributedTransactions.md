@@ -390,7 +390,136 @@ namespace DistributedTransactionSaga
    - **Cons**:
      - Challenges in maintaining consistency and handling failures across multiple service calls.
      - Increased latency due to multiple network calls.
+Here’s a complete implementation of API Composition as a .NET library, not tied to ASP.NET or web applications. This library can be used in any .NET application, demonstrating how to aggregate responses from multiple services.
 
+### Complete API Composition Library Code
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+// Models
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+public class Order
+{
+    public int OrderId { get; set; }
+    public int UserId { get; set; }
+    public string Product { get; set; }
+}
+
+// Service Interfaces
+public interface IUserService
+{
+    Task<User> GetUserByIdAsync(int userId);
+}
+
+public interface IOrderService
+{
+    Task<List<Order>> GetOrdersByUserIdAsync(int userId);
+}
+
+// Mock Services
+public class UserService : IUserService
+{
+    public async Task<User> GetUserByIdAsync(int userId)
+    {
+        await Task.Delay(100); // Simulate async call
+        return new User { Id = userId, Name = $"User {userId}" };
+    }
+}
+
+public class OrderService : IOrderService
+{
+    public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+    {
+        await Task.Delay(100); // Simulate async call
+        return new List<Order>
+        {
+            new Order { OrderId = 1, UserId = userId, Product = "Product A" },
+            new Order { OrderId = 2, UserId = userId, Product = "Product B" }
+        };
+    }
+}
+
+// API Composition Service
+public class ApiCompositionService
+{
+    private readonly IUserService _userService;
+    private readonly IOrderService _orderService;
+
+    public ApiCompositionService(IUserService userService, IOrderService orderService)
+    {
+        _userService = userService;
+        _orderService = orderService;
+    }
+
+    public async Task<ApiResponse> GetUserOrdersAsync(int userId)
+    {
+        var userTask = _userService.GetUserByIdAsync(userId);
+        var ordersTask = _orderService.GetOrdersByUserIdAsync(userId);
+
+        await Task.WhenAll(userTask, ordersTask);
+
+        var user = await userTask;
+        var orders = await ordersTask;
+
+        return new ApiResponse
+        {
+            User = user,
+            Orders = orders
+        };
+    }
+}
+
+public class ApiResponse
+{
+    public User User { get; set; }
+    public List<Order> Orders { get; set; }
+}
+
+// Example Usage
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        IUserService userService = new UserService();
+        IOrderService orderService = new OrderService();
+        var compositionService = new ApiCompositionService(userService, orderService);
+
+        var userId = 1; // Example user ID
+        var response = await compositionService.GetUserOrdersAsync(userId);
+
+        Console.WriteLine($"User: {response.User.Name}");
+        Console.WriteLine("Orders:");
+        foreach (var order in response.Orders)
+        {
+            Console.WriteLine($"- Order ID: {order.OrderId}, Product: {order.Product}");
+        }
+    }
+}
+```
+
+### Explanation
+
+1. **Models**: Defines the `User` and `Order` classes to represent data.
+2. **Service Interfaces**: Declares `IUserService` and `IOrderService` for retrieving user and order data.
+3. **Mock Services**: Implements `UserService` and `OrderService` that simulate data retrieval with asynchronous methods.
+4. **API Composition Service**: Aggregates data from the user and order services into a single response using the `GetUserOrdersAsync` method.
+5. **ApiResponse Class**: Combines user and order data into one response object.
+6. **Example Usage**: The `Program` class demonstrates how to use the composition service to retrieve and display user orders.
+
+### How to Use
+
+1. Create a new .NET Console Application or Class Library project.
+2. Replace the contents of your main file with the provided code.
+3. Run the application, and it will output the user information along with their orders to the console.
+   
 ### Practical Considerations
 
 1. **Choosing the Right Approach**: The choice between 2PC, Sagas, Event Sourcing, or API Composition depends on specific application needs, consistency requirements, and team familiarity with the concepts.
