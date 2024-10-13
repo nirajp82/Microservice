@@ -348,6 +348,55 @@ The OpenID Connect (OIDC) flow builds on OAuth 2.0 to provide both authenticatio
      - The Resource Server uses the corresponding public key to verify this signature.
      - If the signature is valid, it confirms that the token was issued by the trusted Authorization Server and has not been altered.
 
+```cs
+        public ClaimsPrincipal ValidateToken(string token, string publicKey)
+        {
+            // Create a new instance of JwtSecurityTokenHandler to handle token validation
+            var tokenHandler = new JwtSecurityTokenHandler();
+        
+            // Set up the validation parameters
+            var validationParameters = new TokenValidationParameters
+            {
+                // Ensure the signature of the token is validated
+                ValidateIssuerSigningKey = true,
+        
+                // Specify the public key used to validate the token's signature
+                IssuingAuthority = new SymmetricSecurityKey(Convert.FromBase64String(publicKey)),
+        
+                // Optional: You can set these based on your requirements
+                ValidateIssuer = false,  // Validate the issuer of the token
+                ValidateAudience = false, // Validate the audience for the token
+        
+                // Optional: Validate the token's lifetime
+                ValidateLifetime = true,  // Ensure the token is not expired
+        
+                // Optional: Adjust the clock skew to handle time discrepancies
+                ClockSkew = TimeSpan.Zero // Set to zero for exact expiration checks
+            };
+        
+            try
+            {
+                // Validate the token and extract the claims principal
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+                
+                // Return the claims principal if the token is valid
+                return principal;
+            }
+            catch (SecurityTokenException ex)
+            {
+                // Handle token validation failure (invalid token)
+                Console.WriteLine($"Token validation failed: {ex.Message}");
+                return null; // Return null to indicate validation failure
+            }
+            catch (Exception ex)
+            {
+                // Handle any other exceptions that may occur
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return null; // Return null to indicate an error
+            }
+        }
+    ```
+    
    - **Token Introspection**: In addition to signature verification, the Resource Server may call the Authorization Server’s token introspection endpoint to check:
      - The token's validity (e.g., not revoked or expired).
      - Expiration time.
