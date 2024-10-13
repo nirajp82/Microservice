@@ -15,14 +15,16 @@
 12. [**Verification of ID Token by the Client**](#verification-of-id-token-by-the-client)
 13. [**Role of the Authorization Server in OIDC**](#role-of-the-authorization-server-in-oidc)
 14. [**Resource Server's Role in OIDC**](#resource-servers-role-in-oidc)
-15. [What is the difference between Bearer and ID Token](#what-is-the-difference-between-bearer-and-id-token)
-16. *************************
-17. [**Introduction to IdentityServer**](#introduction-to-identityserver)
-18. [**IdentityServer Middleware Endpoints**](#identityserver-middleware-endpoints)
-19. [**What is Duende IdentityServer?**](#What-is-Duende-identityserver)
-20. [Summary](#summary)
-21. *************************
-22. [Explain What a JSON Web Token (JWT) Is and How It Works](#explain-what-a-json-web-token-jwt-is-and-how-it-works)
+15. [**Difference Between Requesting Access Token (OAuth 2.0) vs. Identity Token + Access Token (OIDC)**](#difference-between-requesting-access-token-oauth-20-vs-identity-token--access-token-oidc)
+You can add this item to your table of contents as needed!
+16. [What is the difference between Bearer and ID Token](#what-is-the-difference-between-bearer-and-id-token)
+17. *************************
+18. [**Introduction to IdentityServer**](#introduction-to-identityserver)
+19. [**IdentityServer Middleware Endpoints**](#identityserver-middleware-endpoints)
+20. [**What is Duende IdentityServer?**](#What-is-Duende-identityserver)
+21. [Summary](#summary)
+22. *************************
+23. [Explain What a JSON Web Token (JWT) Is and How It Works](#explain-what-a-json-web-token-jwt-is-and-how-it-works)
 
 ---
 ## What is OAuth2?
@@ -438,6 +440,104 @@ Now, if JaneSmith tried to use JohnDoe’s Access Token, PhotoShareApp could che
 #### **Resource Server's Role in OIDC**
    - **Verifying Access Tokens:** The Resource Server (SocialSnap’s photo storage server) is primarily concerned with verifying Access Tokens to determine if the Client can access specific resources. 
    - **ID Token Usage:** While the Resource Server typically doesn’t verify the ID Token, it relies on the Access Token, which was obtained based on the ID Token, ensuring that resource access is granted only to authorized entities.
+
+# Difference Between Requesting Access Token (OAuth 2.0) vs. Identity Token + Access Token (OIDC)
+
+This document demonstrates how to request an Access Token using OAuth 2.0 and how to request both an Identity Token and an Access Token using OpenID Connect (OIDC). The examples are provided in JavaScript for clarity.
+
+## 1. Requesting an Access Token (OAuth 2.0)
+
+In this example, we will simulate requesting an access token using the OAuth 2.0 **Client Credentials** flow.
+
+```javascript
+async function requestAccessToken(clientId, clientSecret, tokenEndpoint) {
+    const response = await fetch(tokenEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'grant_type': 'client_credentials',
+            'client_id': clientId,
+            'client_secret': clientSecret
+        })
+    });
+
+    const data = await response.json();
+    console.log('Access Token:', data.access_token);
+}
+
+// Example usage
+const clientId = 'your-client-id';
+const clientSecret = 'your-client-secret';
+const tokenEndpoint = 'https://example.com/oauth/token';
+
+requestAccessToken(clientId, clientSecret, tokenEndpoint);
+```
+
+### Explanation:
+- This code snippet uses the **Client Credentials** flow to request an access token.
+- You provide the client ID and secret to obtain an access token without user involvement.
+- The access token is logged to the console.
+
+## 2. Requesting an ID Token + Access Token (OIDC)
+
+In this example, we will simulate requesting both an ID token and an Access token using the OIDC **Authorization Code** flow.
+
+```javascript
+async function requestIdTokenAndAccessToken(clientId, redirectUri, authorizationEndpoint) {
+    // Step 1: Redirect to Authorization Endpoint
+    const authorizationUrl = `${authorizationEndpoint}?` +
+        new URLSearchParams({
+            response_type: 'code',
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            scope: 'openid profile email' // Requesting scopes for OIDC
+        }).toString();
+
+    // Normally, you'd redirect the user here
+    console.log('Redirect to:', authorizationUrl);
+
+    // Step 2: After redirect, exchange the authorization code for tokens
+    const code = 'received-auth-code'; // This code is obtained after redirect
+    const tokenEndpoint = 'https://example.com/oauth/token'; // Same token endpoint
+
+    const response = await fetch(tokenEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': redirectUri,
+            'client_id': clientId,
+            'client_secret': 'your-client-secret'
+        })
+    });
+
+    const data = await response.json();
+    console.log('Access Token:', data.access_token);
+    console.log('ID Token:', data.id_token); // ID token is returned with OIDC
+}
+
+// Example usage
+const clientId = 'your-client-id';
+const redirectUri = 'https://your-app.com/callback';
+const authorizationEndpoint = 'https://example.com/oauth/authorize';
+
+requestIdTokenAndAccessToken(clientId, redirectUri, authorizationEndpoint);
+```
+
+### Explanation:
+- This code snippet illustrates the **Authorization Code** flow, which requires user interaction.
+- The first step constructs a URL for the user to authorize the app and request an ID token and access token.
+- After the user is redirected back to the application with an authorization code, it exchanges that code for both an access token and an ID token.
+- Both tokens are logged to the console.
+
+## Summary
+- In the **OAuth 2.0** example, only an access token is requested.
+- In the **OIDC** example, both an access token and an ID token are requested, demonstrating the added identity verification layer.
 
 #### What is the difference between Bearer and ID Token
 
