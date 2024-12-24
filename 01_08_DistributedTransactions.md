@@ -246,6 +246,12 @@ This enhanced sample code illustrates how to implement Two-Phase Commit with con
 
 
      - **Orchestration**: A central coordinator manages the flow of transactions, telling each service when to act.
+     - Successful Transaction
+        - ![image](https://github.com/user-attachments/assets/9e6c92c3-239e-48e7-9814-dfe311a65888)
+     - Failed Transaction
+        - ![image](https://github.com/user-attachments/assets/cb32a41b-1982-461c-b557-6ce670a7b85b)
+
+
    - **Pros**:
      - Non-blocking: Resources are not held, improving system resilience.
      - More flexible error handling through compensating transactions.
