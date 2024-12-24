@@ -67,7 +67,9 @@ A **saga** is a sequence of **local transactions** that are executed in a specif
 
 There are two common ways to implement a saga:
 
-#### 1. **Choreography-based Saga:**
+#### 1. **Choreography-based Saga (Event Driven):**
+- **How it works**: Each service knows what to do next by listening to events published by other services.
+
 In this approach, each service involved in the saga publishes domain events that trigger local transactions in other services. There’s no central controller, and each service knows what to do next by listening for events.
 
 **Example** (E-commerce Application):
@@ -79,6 +81,11 @@ In this approach, each service involved in the saga publishes domain events that
 4. The **Customer Service** emits a message indicating whether the credit reservation was successful or failed.
 5. Based on the result, the **Order Service** either **approves** or **rejects** the order.
 
+- **Key Points**:
+   - **No central orchestrator**: Services communicate directly via events.
+   - **Decentralized**: Services independently react to events and continue the saga.
+   - **Loose coupling**: Services don't depend on each other’s internal workings, just on events.
+
 **Benefits of Choreography**:
 - Decentralized, with services acting autonomously.
 - More scalable and loosely coupled since there’s no central orchestrator.
@@ -87,7 +94,9 @@ In this approach, each service involved in the saga publishes domain events that
 - Coordination between services can be complex, especially as the number of services grows.
 - Lack of a clear control flow can make debugging and tracing the flow of transactions difficult.
 
-#### 2. **Orchestration-based Saga:**
+#### 2. **Orchestration-based Saga:**  (Centralized Control)
+- **How it works**: A central orchestrator controls the flow of the saga by sending commands to the services and deciding what to do next.
+
 In this approach, an **orchestrator** service controls the saga's flow by telling each service what to do next. The orchestrator is responsible for sending commands and managing the saga's state.
 ![image](https://github.com/user-attachments/assets/b47dcb74-ac72-4289-a80c-991b64252678)
 
@@ -127,7 +136,5 @@ When a saga is initiated via an HTTP request (e.g., creating an order), the clie
 2. **Polling**: After initiating the saga, the service responds with a `orderID` and the client periodically polls (`GET /orders/{orderID}`) to check the status.
 3. **Asynchronous Notification**: The service responds with the `orderID`, and once the saga completes, it sends an asynchronous notification (e.g., via WebSocket or webhook) to the client.
 
-### Conclusion:
-The Saga pattern is essential in microservice architectures where transactions span multiple services and databases. By using a sequence of local transactions and compensating actions, sagas provide a way to maintain consistency and business rules across services, despite not having traditional ACID transactions. However, it introduces complexity, requiring careful design and handling of failure cases, message reliability, and compensating actions.
-### Sample Code: Implementing a Simple Saga Pattern in .NET
-
+References:
+https://microservices.io/patterns/data/saga.html#:~:text=There%20are%20two%20ways%20of,what%20local%20transactions%20to%20execute 
