@@ -239,6 +239,12 @@ This enhanced sample code illustrates how to implement Two-Phase Commit with con
    - **How It Works**: A saga is a series of local transactions where each service executes a transaction and then publishes an event. If one transaction fails, compensating transactions are executed to undo the previous ones.
    - **Types**:
      - **Choreography**: Each service listens for events and decides when to act, coordinating itself with other services.
+     - Successful Transaction
+       - ![image](https://github.com/user-attachments/assets/a651d6b6-62db-4f98-bb85-ec892e0d392d)
+     - Failed Transaction
+       - ![image](https://github.com/user-attachments/assets/42229eb1-e5ce-4182-ac28-bbde77585ac5)
+
+
      - **Orchestration**: A central coordinator manages the flow of transactions, telling each service when to act.
    - **Pros**:
      - Non-blocking: Resources are not held, improving system resilience.
