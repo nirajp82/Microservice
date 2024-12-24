@@ -49,216 +49,81 @@ In a microservices architecture, applications are built as a collection of loose
      - Not fault-tolerant: A failure in one participant can lead to the entire transaction failing.
 To handle concurrent transactions in a Two-Phase Commit (2PC) scenario, you need to ensure that the system can manage isolation between transactions and prevent conflicts. This typically involves incorporating mechanisms like locking, versioning, or using transaction IDs.
 
-### Enhanced Sample Implementation of Two-Phase Commit with Concurrency Handling
-
-#### Step 1: Define the Participant Interface with Transaction IDs
-
-```csharp
-public interface ITransactionParticipant
-{
-    Task<bool> PrepareAsync(string transactionId);
-    Task CommitAsync(string transactionId);
-    Task RollbackAsync(string transactionId);
-}
-```
-
-#### Step 2: Implement the Participant Classes with Basic Locking
-
-```csharp
-public class ParticipantA : ITransactionParticipant
-{
-    private readonly HashSet<string> _lockedTransactions = new();
-
-    public async Task<bool> PrepareAsync(string transactionId)
-    {
-        // Simulate preparation logic (e.g., locking resources)
-        lock (_lockedTransactions)
-        {
-            if (_lockedTransactions.Contains(transactionId))
-            {
-                Console.WriteLine($"Participant A: Transaction {transactionId} is already locked.");
-                return false; // Already locked for this transaction
-            }
-            _lockedTransactions.Add(transactionId);
-        }
-
-        Console.WriteLine("Participant A preparing...");
-        await Task.Delay(100); // Simulate async work
-        return true; // Assume preparation is successful
-    }
-
-    public async Task CommitAsync(string transactionId)
-    {
-        Console.WriteLine($"Participant A committing transaction {transactionId}...");
-        await Task.Delay(100); // Simulate async work
-        _lockedTransactions.Remove(transactionId); // Release lock
-    }
-
-    public async Task RollbackAsync(string transactionId)
-    {
-        Console.WriteLine($"Participant A rolling back transaction {transactionId}...");
-        await Task.Delay(100); // Simulate async work
-        _lockedTransactions.Remove(transactionId); // Release lock
-    }
-}
-
-public class ParticipantB : ITransactionParticipant
-{
-    private readonly HashSet<string> _lockedTransactions = new();
-
-    public async Task<bool> PrepareAsync(string transactionId)
-    {
-        lock (_lockedTransactions)
-        {
-            if (_lockedTransactions.Contains(transactionId))
-            {
-                Console.WriteLine($"Participant B: Transaction {transactionId} is already locked.");
-                return false; // Already locked for this transaction
-            }
-            _lockedTransactions.Add(transactionId);
-        }
-
-        Console.WriteLine("Participant B preparing...");
-        await Task.Delay(100); // Simulate async work
-        return true; // Assume preparation is successful
-    }
-
-    public async Task CommitAsync(string transactionId)
-    {
-        Console.WriteLine($"Participant B committing transaction {transactionId}...");
-        await Task.Delay(100); // Simulate async work
-        _lockedTransactions.Remove(transactionId); // Release lock
-    }
-
-    public async Task RollbackAsync(string transactionId)
-    {
-        Console.WriteLine($"Participant B rolling back transaction {transactionId}...");
-        await Task.Delay(100); // Simulate async work
-        _lockedTransactions.Remove(transactionId); // Release lock
-    }
-}
-```
-
-#### Step 3: Implement the Coordinator with Transaction ID
-
-```csharp
-public class TransactionCoordinator
-{
-    private readonly List<ITransactionParticipant> _participants;
-
-    public TransactionCoordinator(List<ITransactionParticipant> participants)
-    {
-        _participants = participants;
-    }
-
-    public async Task<bool> ExecuteTransactionAsync(string transactionId)
-    {
-        // Step 1: Prepare phase
-        Console.WriteLine("Coordinator starting prepare phase...");
-        var prepareTasks = _participants.Select(p => p.PrepareAsync(transactionId)).ToList();
-        var prepareResults = await Task.WhenAll(prepareTasks);
-
-        // Check if all participants are ready to commit
-        if (prepareResults.All(result => result))
-        {
-            Console.WriteLine("All participants are prepared. Committing...");
-            foreach (var participant in _participants)
-            {
-                await participant.CommitAsync(transactionId);
-            }
-            Console.WriteLine("Transaction committed successfully.");
-            return true;
-        }
-        else
-        {
-            Console.WriteLine("One or more participants failed to prepare. Rolling back...");
-            foreach (var participant in _participants)
-            {
-                await participant.RollbackAsync(transactionId);
-            }
-            Console.WriteLine("Transaction rolled back.");
-            return false;
-        }
-    }
-}
-```
-
-#### Step 4: Program Entry Point with Transaction IDs
-
-```csharp
-public class Program
-{
-    public static async Task Main(string[] args)
-    {
-        var participants = new List<ITransactionParticipant>
-        {
-            new ParticipantA(),
-            new ParticipantB()
-        };
-
-        var coordinator = new TransactionCoordinator(participants);
-
-        // Execute two concurrent transactions
-        var transactionId1 = Guid.NewGuid().ToString();
-        var transactionId2 = Guid.NewGuid().ToString();
-
-        // Start transaction 1
-        Console.WriteLine($"Starting transaction {transactionId1}");
-        await coordinator.ExecuteTransactionAsync(transactionId1);
-
-        // Start transaction 2
-        Console.WriteLine($"Starting transaction {transactionId2}");
-        await coordinator.ExecuteTransactionAsync(transactionId2);
-    }
-}
-```
-
-### Explanation of Enhancements
-
-1. **Transaction IDs**: Each transaction is associated with a unique ID (`transactionId`) to differentiate between concurrent transactions.
-
-2. **Basic Locking Mechanism**: 
-   - Each participant uses a `HashSet` to track locked transaction IDs. 
-   - When a participant is asked to prepare for a transaction, it checks if the transaction ID is already locked. If so, it returns `false`, indicating that it cannot proceed with the preparation.
-
-3. **Concurrent Execution**: The program initiates two transactions concurrently by calling `ExecuteTransactionAsync` with different transaction IDs.
-
-### Key Points
-
-- **Isolation**: The locking mechanism ensures that concurrent transactions do not interfere with each other. However, this is a simplified approach; in a real-world scenario, you might need to implement more sophisticated locking or isolation strategies depending on the database or system being used.
-  
-- **Error Handling**: The example does not include extensive error handling for simplicity, but in a production system, you would need to handle exceptions, timeouts, and retries.
-
-- **Scalability**: For a more scalable solution, consider using distributed transaction coordinators, message queues, or databases that support distributed transactions natively.
-
-### Conclusion
-
-This enhanced sample code illustrates how to implement Two-Phase Commit with concurrency handling in a .NET application. While it captures the essence of 2PC, a production-ready implementation would require more robust error handling, transaction logging, and possibly the use of distributed transaction managers or frameworks.
 
 2. **Sagas**:
-   - **How It Works**: A saga is a series of local transactions where each service executes a transaction and then publishes an event. If one transaction fails, compensating transactions are executed to undo the previous ones.
-   - **Types**:
-     - **Choreography**: Each service listens for events and decides when to act, coordinating itself with other services.
-     - Successful Transaction
-       - ![image](https://github.com/user-attachments/assets/a651d6b6-62db-4f98-bb85-ec892e0d392d)
-     - Failed Transaction
-       - ![image](https://github.com/user-attachments/assets/42229eb1-e5ce-4182-ac28-bbde77585ac5)
+The **Saga Pattern** is a design pattern used to manage distributed transactions in microservice-based systems, especially when each service has its own database (as is the case with the **Database per Service** pattern). This pattern helps in maintaining data consistency across multiple services without relying on traditional ACID (Atomicity, Consistency, Isolation, Durability) transactions, which are difficult to achieve in a distributed system due to limitations like network failures and service unavailability.
 
+### Context and Problem:
+In a microservices architecture, each service typically manages its own database. This separation can lead to complex transactions that span across multiple services. For example, when processing an e-commerce order, the order service and the customer service are separate, but the customer’s credit limit needs to be checked before the order is approved. A simple ACID transaction won’t work here because each service has its own database, and using distributed transactions (like 2PC) is not viable due to issues of complexity and reliability in distributed systems.
 
-     - **Orchestration**: A central coordinator manages the flow of transactions, telling each service when to act.
-     - Successful Transaction
-        - ![image](https://github.com/user-attachments/assets/9e6c92c3-239e-48e7-9814-dfe311a65888)
-     - Failed Transaction
-        - ![image](https://github.com/user-attachments/assets/cb32a41b-1982-461c-b557-6ce670a7b85b)
+### Forces:
+- **2PC (Two-Phase Commit)** is not a good option because it’s hard to implement and prone to failure in distributed systems.
+- There is a need for a mechanism to ensure business rules (like checking credit limits) are enforced, even when operations span multiple services.
 
+### Solution: The Saga Pattern
+A **saga** is a sequence of **local transactions** that are executed in a specific order to complete a business process that spans multiple services. Each local transaction updates the database of one service and then sends a message/event to trigger the next service in the saga. If a transaction fails, compensating transactions (to undo the previous steps) are triggered to maintain consistency.
 
-   - **Pros**:
-     - Non-blocking: Resources are not held, improving system resilience.
-     - More flexible error handling through compensating transactions.
-   - **Cons**:
-     - Increased complexity: Managing event flow and compensation logic can be challenging.
-     - Eventual consistency: Not all services may be consistent immediately after a transaction.
+There are two common ways to implement a saga:
 
+#### 1. **Choreography-based Saga:**
+In this approach, each service involved in the saga publishes domain events that trigger local transactions in other services. There’s no central controller, and each service knows what to do next by listening for events.
+
+**Example** (E-commerce Application):
+1. **Order Service** receives a request to create an order (`POST /orders`) and creates an order in a **PENDING** state.
+2. The **Order Service** emits an **OrderCreated** event.
+3. The **Customer Service** listens for the `OrderCreated` event and tries to **reserve credit** for the customer.
+4. The **Customer Service** emits a message indicating whether the credit reservation was successful or failed.
+5. Based on the result, the **Order Service** either **approves** or **rejects** the order.
+
+**Benefits of Choreography**:
+- Decentralized, with services acting autonomously.
+- More scalable and loosely coupled since there’s no central orchestrator.
+
+**Challenges of Choreography**:
+- Coordination between services can be complex, especially as the number of services grows.
+- Lack of a clear control flow can make debugging and tracing the flow of transactions difficult.
+
+#### 2. **Orchestration-based Saga:**
+In this approach, an **orchestrator** service controls the saga's flow by telling each service what to do next. The orchestrator is responsible for sending commands and managing the saga's state.
+
+**Example** (E-commerce Application):
+1. **Order Service** receives the request to create an order (`POST /orders`) and starts the saga by creating an **Order** in the **PENDING** state.
+2. The **Order Service** sends a **Reserve Credit** command to the **Customer Service**.
+3. The **Customer Service** tries to reserve credit and replies with the result.
+4. The **Order Service** decides to either approve or reject the order based on the outcome of the credit reservation.
+
+**Benefits of Orchestration**:
+- Centralized control over the saga, making it easier to manage and monitor.
+- The orchestrator has full knowledge of the process and can make decisions based on the overall state.
+
+**Challenges of Orchestration**:
+- The orchestrator becomes a central point of failure.
+- The orchestrator needs to be aware of all services involved, leading to tighter coupling.
+
+### Compensating Transactions:
+When a saga fails (e.g., the credit reservation fails after the order is created), **compensating transactions** are used to undo the changes made by the previous transactions. For example, if the credit reservation fails after the order was created, the system would need to cancel the order (change its state back to `CANCELLED`) or take other compensatory actions.
+
+These compensating actions are crucial because, unlike traditional ACID transactions, a saga does not automatically roll back changes across services. The developer must design these compensating transactions to ensure consistency in the system.
+
+### Benefits of the Saga Pattern:
+- **Data Consistency Across Services**: The saga pattern enables distributed transactions to maintain consistency without needing distributed transactions, which are difficult to implement in microservices.
+- **Flexibility**: Both choreography and orchestration offer flexibility depending on the application’s needs.
+- **Failure Recovery**: With compensating transactions, the system can recover from failures and ensure that business rules are respected.
+
+### Drawbacks of the Saga Pattern:
+- **No Automatic Rollback**: Unlike traditional ACID transactions, sagas require developers to manually design compensating transactions. This adds complexity and responsibility to ensure data consistency.
+- **Risk of Data Anomalies**: Since sagas are not fully isolated like ACID transactions, concurrent executions can result in inconsistent data unless countermeasures (such as eventual consistency, locks, or careful transaction design) are implemented.
+- **Reliability in Messaging**: Since sagas rely on message/event communication, ensuring reliable message delivery (e.g., handling failures, retries, and duplicates) becomes important.
+- **Complexity in Monitoring and Debugging**: Especially in choreography-based sagas, it can be hard to trace the flow of events and identify where failures occurred.
+
+### Client-Server Interaction in Sagas:
+When a saga is initiated via an HTTP request (e.g., creating an order), the client needs to know the final outcome of the saga. There are several approaches to notify the client about the outcome of the saga:
+1. **Immediate Response**: The service sends a response once the saga completes (e.g., an `OrderApproved` or `OrderRejected` event).
+2. **Polling**: After initiating the saga, the service responds with a `orderID` and the client periodically polls (`GET /orders/{orderID}`) to check the status.
+3. **Asynchronous Notification**: The service responds with the `orderID`, and once the saga completes, it sends an asynchronous notification (e.g., via WebSocket or webhook) to the client.
+
+### Conclusion:
+The Saga pattern is essential in microservice architectures where transactions span multiple services and databases. By using a sequence of local transactions and compensating actions, sagas provide a way to maintain consistency and business rules across services, despite not having traditional ACID transactions. However, it introduces complexity, requiring careful design and handling of failure cases, message reliability, and compensating actions.
 ### Sample Code: Implementing a Simple Saga Pattern in .NET
 
 ```csharp
