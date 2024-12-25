@@ -30,9 +30,9 @@ public class ItemsController : ControllerBase
     [Authorize(Policies.Read)]
     public async Task<IResult> GetAsync()
     {
-        bool isPollyTest = false;
-        if (isPollyTest)
-            await ClientPollyTest();
+        //bool isPollyTest = false;
+        //if (isPollyTest)
+        //    await ClientPollyTest();
 
         var result = (await _itemsRepository.GetAllAsync())
                         .Select(Item => Item.AsDto());

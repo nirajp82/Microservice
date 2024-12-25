@@ -11,6 +11,9 @@ using MongoDB.Bson;
 using Play.Common.Settings;
 using Play.Identity.Service.Entities;
 using Play.Identity.Service.HostedServices;
+using Play.Common.RabbitMQ;
+using GreenPipes;
+using Play.Identity.Service.Exceptions;
 
 namespace Play.Identity.Service
 {
@@ -46,6 +49,13 @@ namespace Play.Identity.Service
                     mongoDbSettings.ConnectionString,
                     serviceSettings.ServiceName
                 );
+
+            services.AddMassTransitWithRabbitMq(retryConfigurator => 
+            {
+                retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+                retryConfigurator.Ignore(typeof(UnknownUserException));
+                retryConfigurator.Ignore(typeof(InsufficientFundsException));
+            });
 
             // Configures the IdentityServer middleware in your ASP.NET Core application.
             // IdentityServer is used for handling authentication and authorization, issuing tokens, and managing user claims.
