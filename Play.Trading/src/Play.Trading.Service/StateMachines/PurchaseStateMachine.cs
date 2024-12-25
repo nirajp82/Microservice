@@ -1,15 +1,15 @@
-﻿using Automatonymous;
-using Play.Trading.Service.Contracts;
 using System;
+using Automatonymous;
+using Play.Trading.Service.Contracts;
 
 namespace Play.Trading.Service.StateMachines;
 
 public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
 {
-    public State Accepted { get; set; }
-    public State ItemsGranted { get; set; }
-    public State Completed { get; set; }
-    public State Faulted { get; set; }
+    public State Accepted { get; }
+    public State ItemsGranted { get; }
+    public State Completed { get; }
+    public State Faulted { get; }
 
     public Event<PurchaseRequested> PurchaseRequested { get; }
 
@@ -20,17 +20,16 @@ public class PurchaseStateMachine : MassTransitStateMachine<PurchaseState>
         ConfigureInitialState();
     }
 
-    private void ConfigureEvents() 
+    private void ConfigureEvents()
     {
         Event(() => PurchaseRequested);
     }
 
-    private void ConfigureInitialState() 
+    private void ConfigureInitialState()
     {
         Initially(
             When(PurchaseRequested)
-                .Then(context =>
-                {
+                .Then(context => {
                     context.Instance.UserId = context.Data.UserId;
                     context.Instance.ItemId = context.Data.ItemId;
                     context.Instance.Quantity = context.Data.Quantity;

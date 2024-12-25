@@ -54,7 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Inventory.Contracts", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Identity.Contracts", "Play.Identity\src\Play.Identity.Contracts\Play.Identity.Contracts.csproj", "{DB02870E-D9C3-48CC-ABC7-15012B7C9532}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Trading.Service", "Play.Trading.Service", "{BC05636F-C089-4877-A498-F94395294DC2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Play.Trading", "Play.Trading", "{BC05636F-C089-4877-A498-F94395294DC2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Play.Trading.Service", "Play.Trading\src\Play.Trading.Service\Play.Trading.Service.csproj", "{14C669CA-A0A3-4FC6-A79D-DDE7F408A801}"
 EndProject
