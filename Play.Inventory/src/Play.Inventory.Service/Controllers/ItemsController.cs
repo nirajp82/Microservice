@@ -15,7 +15,6 @@ public class ItemsController : ControllerBase
 {
     private const string AdminRole = "Admin";
 
-    //The IHttpClientFactory will go ahead and create the typed client ("CatalogClient") as needed. 
     //public readonly CatalogClient _catalogClient;
     public readonly IRepository<CatalogItem> _catalogItemRepo;
     public readonly IRepository<InventoryItem> _inventoryItemRepo;

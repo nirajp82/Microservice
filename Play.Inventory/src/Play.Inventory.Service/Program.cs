@@ -4,6 +4,9 @@ using Play.Common.MongoDb;
 using Play.Common.Settings;
 using Play.Common.RabbitMQ;
 using Play.Common.Identity;
+using GreenPipes.Configurators;
+using GreenPipes;
+using Play.Inventory.Service.Exceptions;
 
 const string ALLOWED_ORIGIN_SETTING = "AllowedOrigin";
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +20,12 @@ builder.Services
     .AddMongo()
     .AddMongoRepo<InventoryItem>("inventoryItems")
     .AddMongoRepo<CatalogItem>("catalogItems")
-    .AddMassTransitWithRabbitMq()
+    .AddMassTransitWithRabbitMq(retryConfigurator => 
+    {
+        retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+        //No need to retry if UnknownItemException is thrown. Retry is for Transit errors only.
+        retryConfigurator.Ignore(typeof(UnknownItemException));
+    })
     .AddJwtBearerAuthentication();
 
 var randomJitter = new Random();
